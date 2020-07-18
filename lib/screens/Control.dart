@@ -13,7 +13,7 @@ class _ControlScreenState extends State<ControlScreen> {
   bool connected = false;
   final String serverAddress = 'http://192.168.178.38:5000/';
   final int serverTimeout = 2; // sec
-  final int joystick_refresh_period = 100; // milliseconds
+  final int joystickRefreshPeriod = 100; // milliseconds
   final Map<String,String> headers = {
     'Content-type' : 'application/json',
     'Accept': 'application/json',
@@ -54,7 +54,7 @@ class _ControlScreenState extends State<ControlScreen> {
       child: JoystickView(
         backgroundColor: Colors.blue,
         innerCircleColor: Colors.blue,
-        interval: Duration(milliseconds: joystick_refresh_period),
+        interval: Duration(milliseconds: joystickRefreshPeriod),
         showArrows: true,
         onDirectionChanged: (degree, distance) {
           double v = degree * 0.01745329252; // ( * pi / 180 )
