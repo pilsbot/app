@@ -58,7 +58,7 @@ class _ControlScreenState extends State<ControlScreen> {
         showArrows: true,
         onDirectionChanged: (degree, distance) {
           double v = degree * 0.01745329252; // ( * pi / 180 )
-          this.send('joystick', {'x': sin(v), 'y': cos(v)});
+          this.send('joystick', {'x': distance*sin(v), 'y': distance*cos(v)});
         },
       ),
     );
