@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:control_pad/views/joystick_view.dart';
 import 'package:http/http.dart' as http;
@@ -10,24 +11,38 @@ class ControlScreen extends StatefulWidget {
 
 class _ControlScreenState extends State<ControlScreen> {
   bool connected = false;
-  final String serverIp = '192.168.178.38';
+  final String serverAddress = 'http://192.168.178.38:5000/';
   final int serverTimeout = 2; // sec
+  final Map<String,String> headers = {
+    'Content-type' : 'application/json',
+    'Accept': 'application/json',
+  };
 
-  Future<bool> send(id, values) async {
-    var params = {"type": id, "values": values};
-    http.Response res = await http.post(
-        serverIp,
-        body: params,
-        headers: {
-          "Accept": "application/json"
-        }
-    );
-    // Change state if there is a change in the connection status
-    if(res.statusCode != 200 && connected){
-      setState((){ connected = false; });
-    }
-    if(res.statusCode == 200 && !connected){
-      setState((){ connected = true; });
+  Future<bool> send(id, params) async {
+    try {
+      http.Response res = await http.post(
+        serverAddress + id,
+        headers: headers,
+        body: json.encode(params),
+      ).timeout(
+          Duration(seconds: serverTimeout),
+          onTimeout: () {
+            connected = false;
+            return null;
+          }
+      );
+      // Change state if there is a change in the connection status
+      if(res.statusCode != 200 && connected){
+        setState((){ connected = false; });
+      }
+      if(res.statusCode == 200 && !connected){
+        setState((){ connected = true; });
+      }
+    } catch (_){
+      // TODO: what to do in case of socket exception? retry connection? go to home page?
+      if(connected) {
+        setState(() { connected = false; });
+      }
     }
     return connected;
   }
@@ -42,7 +57,7 @@ class _ControlScreenState extends State<ControlScreen> {
         showArrows: true,
         onDirectionChanged: (degree, distance) {
           double v = degree * 0.01745329252; // ( * pi / 180 )
-          this.send('joystick', [sin(v), cos(v)]);
+          this.send('joystick', {'x': sin(v), 'y': cos(v)});
         },
       ),
     );
@@ -77,7 +92,7 @@ class _ControlScreenState extends State<ControlScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: FutureBuilder<bool>(
-        future: this.send(0, [0,0]),
+        future: this.send('joystick', {'x': 0, 'y': 0}),
         builder: (context, AsyncSnapshot<bool> snapshot) {
           if (this.connected) {
             return showJoystick();
