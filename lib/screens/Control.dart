@@ -10,9 +10,18 @@ class ControlScreen extends StatefulWidget {
 }
 
 class _ControlScreenState extends State<ControlScreen> {
+  /// Tell if the app is connected with the pilsbot
   bool connected = false;
+  /// What is the pilsbot current sound volume
   double volume = 0;
+  /// This attribute stores the old volume value when the pilsbot is muted
+  /// in order to know which volume to take when un-muting
+  double savedVolume = 0;
+  /// Is the pilsbot sound muted?
+  bool mute = false; // mute volume
+  /// The joystick refresh minimum period
   Duration joystickRefreshPeriod = Duration(milliseconds: 100);
+  /// How often do we want to reach the pilsbot when we are not connected?
   Duration tryToReachServerPeriod = Duration(seconds: 2);
 
   void checkStatusChanged(int statusCode) {
@@ -67,22 +76,42 @@ class _ControlScreenState extends State<ControlScreen> {
   }
 
   Column showSoundBar(){
+    Icon icon;
+    if(volume == 0 || mute){
+      icon = Icon(Icons.volume_off, color: Colors.blue, size: 40);
+    } else {
+      icon = Icon(Icons.volume_up, color: Colors.blue, size: 40);
+    }
     return Column(
       children: <Widget>[
         RotatedBox(
           quarterTurns: -1,
           child: Slider(
-            value: this.volume,
+            value: volume,
             activeColor: Colors.blue,
             onChanged: (v){
               send('volume', v);
+              setState(() { volume = v; });
             },
           )
         ),
-        Icon(
-          Icons.volume_up,
-          color: Colors.blue,
-          size: 40,
+        IconButton(
+          icon: icon,
+          onPressed: (){
+            setState(() {
+              mute = !mute;
+              if(!mute){
+                // Restore old volume after un-muting
+                volume = savedVolume;
+                send('volume', savedVolume);
+              } else {
+                // Save the old volume for later and mute
+                savedVolume = volume;
+                volume = 0;
+              }
+              send('volume', volume);
+            });
+          },
         ),
       ],
     );
