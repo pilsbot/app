@@ -8,19 +8,20 @@ final Map<String,String> headers = {
   'Accept': 'application/json',
 };
 
-Future<bool> restPost(id, params) async {
+/// Always return a Map<String, dynamic> with AT LEAST {'error': bool} element
+Future<Map<String, dynamic>> restPost(id, params) async {
   try {
     http.Response res = await http.post(
       serverAddress + id,
       headers: headers,
       body: json.encode(params),
     );
-    if(res.statusCode == 200){
-      return true;
-    }
-    return false;
+    Map<String, dynamic> returnVal = json.decode(res.body);
+    returnVal['error'] = false;
+    returnVal['statusCode'] = res.statusCode;
+    return returnVal;
   } catch (_){ }
-  return false;
+  return {'error': true};
 }
 
 Future<Map<String, dynamic>> restGet(id) async{
