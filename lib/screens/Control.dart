@@ -2,7 +2,7 @@ import 'dart:math';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:control_pad/views/joystick_view.dart';
-import 'package:http/http.dart' as http;
+import 'package:pilsbot/model/Communication.dart';
 
 class ControlScreen extends StatefulWidget {
   @override
@@ -11,92 +11,132 @@ class ControlScreen extends StatefulWidget {
 
 class _ControlScreenState extends State<ControlScreen> {
   bool connected = false;
-  final String serverAddress = 'http://192.168.178.38:5000/';
-  final int serverTimeout = 2; // sec
+  double volume = 0;
   final int joystickRefreshPeriod = 100; // milliseconds
-  final Map<String,String> headers = {
-    'Content-type' : 'application/json',
-    'Accept': 'application/json',
-  };
+
+  void checkStatusChanged(int statusCode) {
+    // Change state if there is a change in the connection status
+    if (statusCode != 200 && connected) {
+      setState(() {
+        connected = false;
+      });
+    }
+    if (statusCode == 200 && !connected) {
+      setState(() {
+        connected = true;
+      });
+    }
+  }
 
   Future<bool> send(id, params) async {
-    try {
-      http.Response res = await http.post(
-        serverAddress + id,
-        headers: headers,
-        body: json.encode(params),
-      ).timeout(
-          Duration(seconds: serverTimeout),
-          onTimeout: () {
-            connected = false;
-            return null;
-          }
-      );
-      // Change state if there is a change in the connection status
-      if(res.statusCode != 200 && connected){
-        setState((){ connected = false; });
-      }
-      if(res.statusCode == 200 && !connected){
-        setState((){ connected = true; });
-      }
-    } catch (_){
-      // TODO: what to do in case of socket exception? retry connection? go to home page?
-      if(connected) {
-        setState(() { connected = false; });
-      }
+    bool response = await restPost(id, params);
+    // Change state if there is a change in the connection status
+    if(response != connected){
+      setState((){ connected = response; });
     }
     return connected;
   }
 
-  Container showJoystick() {
+  Future<Map<String, dynamic>> read(id) async{
+    Map<String, dynamic> response = await restGet(id);
+    if(response['error'] == true){
+      // Change state if there was an error
+      if(connected) {
+        setState(() { connected = false; });
+      }
+      return null;
+    }
+    if(!connected) {
+      setState(() { connected = true; });
+    }
+    return response;
+  }
+
+  Container showControlPage(){
     return Container(
       color: Colors.black,
-      child: JoystickView(
-        backgroundColor: Colors.blue,
-        innerCircleColor: Colors.blue,
-        interval: Duration(milliseconds: joystickRefreshPeriod),
-        showArrows: true,
-        onDirectionChanged: (degree, distance) {
-          double v = degree * 0.01745329252; // ( * pi / 180 )
-          this.send('joystick', {'x': distance*sin(v), 'y': distance*cos(v)});
-        },
+      child: Row(
+        children: <Widget>[
+          showSoundBar(),
+          Container(width: 50),
+          showJoystick(),
+        ],
       ),
     );
   }
 
+  Column showSoundBar(){
+    return Column(
+      children: <Widget>[
+        RotatedBox(
+          quarterTurns: -1,
+          child: Slider(
+            value: this.volume,
+            activeColor: Colors.blue,
+            onChanged: (v){
+              send('volume', v);
+            },
+          )
+        ),
+        Icon(
+          Icons.volume_up,
+          color: Colors.blue,
+          size: 40,
+        ),
+      ],
+    );
+  }
+
+  JoystickView showJoystick() {
+    return JoystickView(
+      backgroundColor: Colors.blue,
+      innerCircleColor: Colors.blue,
+      interval: Duration(milliseconds: joystickRefreshPeriod),
+      showArrows: true,
+      onDirectionChanged: (degree, distance) {
+        double v = degree * 0.01745329252; // ( * pi / 180 )
+        this.send('joystick', {'x': distance*sin(v), 'y': distance*cos(v)});
+      },
+    );
+  }
+
+  // TODO: loading indicator over disable control page instead of all changes
   Container showLoadingIndicator() {
     return Container(
-      color: Colors.black,
-      child: Center(
-        child: Container(
-          height: 100,
-          child: Column(
-            children: <Widget>[
-              CircularProgressIndicator(),
-              Container(
-                margin: EdgeInsets.all(16.0),
-                child: Text(
-                  'Connecting...',
-                  style: TextStyle(
-                    color: Colors.blue,
-                  )
-                ),
+        color: Colors.black,
+        child: Center(
+            child: Container(
+              height: 100,
+              child: Column(
+                children: <Widget>[
+                  CircularProgressIndicator(),
+                  Container(
+                    margin: EdgeInsets.all(16.0),
+                    child: Text(
+                        'Connecting...',
+                        style: TextStyle(
+                          color: Colors.blue,
+                        )
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            )
         )
-      )
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder<bool>(
-        future: this.send('joystick', {'x': 0, 'y': 0}),
-        builder: (context, AsyncSnapshot<bool> snapshot) {
+      body: FutureBuilder<Map<String, dynamic>>(
+        future: this.read('controlstate'),
+        builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+          if(snapshot.hasData){
+            volume = snapshot.data['volume'];
+          }
           if (this.connected) {
-            return showJoystick();
+            return showControlPage();
           } else {
             return showLoadingIndicator();
           }
