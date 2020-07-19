@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'dart:convert';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:control_pad/views/joystick_view.dart';
 import 'package:pilsbot/model/Communication.dart';
@@ -12,7 +12,8 @@ class ControlScreen extends StatefulWidget {
 class _ControlScreenState extends State<ControlScreen> {
   bool connected = false;
   double volume = 0;
-  final int joystickRefreshPeriod = 100; // milliseconds
+  Duration joystickRefreshPeriod = Duration(milliseconds: 100);
+  Duration tryToReachServerPeriod = Duration(seconds: 2);
 
   void checkStatusChanged(int statusCode) {
     // Change state if there is a change in the connection status
@@ -91,7 +92,7 @@ class _ControlScreenState extends State<ControlScreen> {
     return JoystickView(
       backgroundColor: Colors.blue,
       innerCircleColor: Colors.blue,
-      interval: Duration(milliseconds: joystickRefreshPeriod),
+      interval: joystickRefreshPeriod,
       showArrows: true,
       onDirectionChanged: (degree, distance) {
         double v = degree * 0.01745329252; // ( * pi / 180 )
@@ -138,6 +139,15 @@ class _ControlScreenState extends State<ControlScreen> {
           if (this.connected) {
             return showControlPage();
           } else {
+            // Try to reach the server every 5 seconds
+            Timer.periodic(tryToReachServerPeriod, (timer) async{
+              Map<String, dynamic> state = await read('controlstate');
+              if(state != null){
+                if (state['error'] == false) {
+                  timer.cancel();
+                }
+              }
+            });
             return showLoadingIndicator();
           }
         }
