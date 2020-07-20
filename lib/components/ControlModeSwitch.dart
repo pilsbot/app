@@ -7,19 +7,29 @@ class ControlModeSwitch extends StatefulWidget {
 }
 
 class _ControlModeSwitchState extends State<ControlModeSwitch> {
-  /// Is the button pressed or not?
-  bool pressed=false;
+  /// Steering modus:
+  /// modus == 0 -> use two joysticks. left joy=throttle. right joy = direction
+  /// modus == 1 -> use one joystick on the left. The right joystick disapear
+  /// modus == 2 -> autonomic modus -> no manual control
+  int modus=0;
 
   @override
   Widget build(BuildContext context) {
     Color colorFill;
-    Color colorIcon;
-    if(pressed){
-      colorFill = Colors.grey;
-      colorIcon = Colors.black26;
-    } else {
+    Color colorText;
+    String text;
+    if(modus == 0){
       colorFill = Colors.blue;
-      colorIcon = Colors.black;
+      colorText = Colors.black54;
+      text = 'M1';
+    } else if (modus == 1){
+      colorFill = Colors.blue;
+      colorText = Colors.black54;
+      text = 'M2';
+    } else {
+      colorFill = Colors.grey;
+      colorText = Colors.black26;
+      text = 'MA';
     }
     return Container(
         width: MediaQuery.of(context).size.width*0.1,
@@ -30,17 +40,22 @@ class _ControlModeSwitchState extends State<ControlModeSwitch> {
         ),
         child: RawMaterialButton(
           onPressed: () {
-            restPost('emergencystop', !pressed);
+            restPost('controlmode', modus); // TODO adapt interface
             setState(() {
-              pressed = !pressed;
+              modus = modus+1;
+              if(modus > 2){
+                modus = 0;
+              }
             });
           },
           elevation: 2.0,
           fillColor: colorFill,
-          child: Icon(
-            Icons.directions_car,
-            size: 30.0,
-            color: colorIcon,
+          child: Text(
+            text,
+            style: TextStyle(
+              color: colorText,
+              fontWeight: FontWeight.bold
+            ),
           ),
           shape: CircleBorder(),
         )
