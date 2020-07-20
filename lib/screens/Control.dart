@@ -8,6 +8,8 @@ import 'package:pilsbot/model/Communication.dart';
 import 'package:pilsbot/components/SoundBar.dart';
 import 'package:pilsbot/components/Joystick.dart';
 import 'package:pilsbot/components/Loading.dart';
+import 'package:pilsbot/components/LightsSwitch.dart';
+import 'package:pilsbot/components/BatteryState.dart';
 
 class ControlScreen extends StatefulWidget {
 
@@ -43,22 +45,34 @@ class _ControlScreenState extends State<ControlScreen> {
       color: Colors.black,
       child: Row(
         children: <Widget>[
-          Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              SoundBar(),
-              Joystick(),
-            ]
+          Column(children: <Widget>[
+            Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  SoundBar(),
+                  BatteryState(),
+                ]
+            ),
+            Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Joystick(),
+                ]
+              )
+          ],),
+          Container(
+            width: MediaQuery.of(context).size.width*0.6,
           ),
-          Container(width: MediaQuery.of(context).size.width*0.61),
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
               EmergencySwitch(),
               ControlModeSwitch(),
-              Container(height: MediaQuery.of(context).size.width*0.22),
+              LightsSwitch(),
+              Container(height: MediaQuery.of(context).size.width*0.16),
               Joystick(),
             ],
           )
