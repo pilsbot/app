@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pilsbot/components/ControlModeSwitch.dart';
 import 'package:pilsbot/components/EmergencySwitch.dart';
+import 'package:pilsbot/model/Common.dart';
 import 'package:pilsbot/model/Communication.dart';
 import 'package:pilsbot/components/SoundBar.dart';
 import 'package:pilsbot/components/Joystick.dart';
@@ -29,7 +30,7 @@ class _ControlScreenState extends State<ControlScreen> {
   void initState(){
     super.initState();
     timer = Timer.periodic(Duration(milliseconds: period), (tim) async{
-      var response = await restGet('controlstate');
+      var response = await restGet(restGetControlState);
       //print(connected);
       if(response['error'] == connected) {
         // changed from connected to not connected or vice versa

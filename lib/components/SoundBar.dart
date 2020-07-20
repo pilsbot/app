@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pilsbot/model/Common.dart';
 import 'package:pilsbot/model/Communication.dart';
 
 class SoundBar extends StatefulWidget {
@@ -35,7 +36,7 @@ class _SoundBarState extends State<SoundBar> {
                 value: volume,
                 activeColor: Colors.blue,
                 onChanged: (v){
-                  restPost('volume', v);
+                  restPost(restSetVolume, v);
                   setState(() { volume = v; });
                 },
               )

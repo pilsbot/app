@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pilsbot/model/Communication.dart';
+import 'package:pilsbot/model/Common.dart';
 
 class ControlModeSwitch extends StatefulWidget {
   @override
@@ -40,7 +41,7 @@ class _ControlModeSwitchState extends State<ControlModeSwitch> {
         ),
         child: RawMaterialButton(
           onPressed: () {
-            restPost('controlmode', modus); // TODO adapt interface
+            restPost(restSetControlMode, modus); // TODO adapt interface
             setState(() {
               modus = modus+1;
               if(modus > 2){

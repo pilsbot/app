@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pilsbot/model/Common.dart';
 import 'package:pilsbot/model/Communication.dart';
 
 class LightsSwitch extends StatefulWidget {
@@ -30,7 +31,7 @@ class _LightsSwitchState extends State<LightsSwitch> {
         ),
         child: RawMaterialButton(
           onPressed: () {
-            restPost('switchlights', !pressed);
+            restPost(restSetLightsOn, !pressed);
             setState(() {
               pressed = !pressed;
             });

@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:control_pad/views/joystick_view.dart';
+import 'package:pilsbot/model/Common.dart';
 import 'package:pilsbot/model/Communication.dart';
 
 class Joystick extends StatefulWidget {
@@ -27,7 +28,7 @@ class _JoystickState extends State<Joystick> {
   void initState(){
     super.initState();
     timer = Timer.periodic(Duration(milliseconds: period), (tim) async{
-      var response = await restPost('joystick', {'id': widget.name, 'x': x, 'y': y});
+      var response = await restPost(restSetJoystickValues, {'id': widget.name, 'x': x, 'y': y});
       if(response['error']) {
         // Do not send data when there is an error.
         // Wait for the parent widget to reload this widget later when

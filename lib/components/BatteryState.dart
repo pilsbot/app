@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pilsbot/model/Communication.dart';
 
 class BatteryState extends StatefulWidget {
   @override

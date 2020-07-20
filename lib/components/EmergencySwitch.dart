@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pilsbot/model/Common.dart';
 import 'package:pilsbot/model/Communication.dart';
 
 class EmergencySwitch extends StatefulWidget {
@@ -30,7 +31,7 @@ class _EmergencySwitchState extends State<EmergencySwitch> {
       ),
       child: RawMaterialButton(
         onPressed: () {
-          restPost('emergencystop', !pressed);
+          restPost(restSetEmergencyStop, !pressed);
           setState(() {
             pressed = !pressed;
           });
