@@ -8,10 +8,10 @@ class ControlModeSwitch extends StatefulWidget {
 
 class _ControlModeSwitchState extends State<ControlModeSwitch> {
   /// Steering modus:
-  /// modus == 0 -> use two joysticks. left joy=throttle. right joy = direction
-  /// modus == 1 -> use one joystick on the left. The right joystick disapear
+  /// modus == 0 -> use one joystick on the left. The right joystick disapear
+  /// modus == 1 -> use two joysticks. left joy=throttle. right joy = direction
   /// modus == 2 -> autonomic modus -> no manual control
-  int modus=0;
+  int modus=1;
 
   @override
   Widget build(BuildContext context) {
