@@ -39,8 +39,9 @@ class _JoystickState extends State<Joystick> {
         size:MediaQuery.of(context).size.height*0.32,
         backgroundColor: Colors.blue,
         innerCircleColor: Colors.blue,
+        iconsColor: Colors.black54,
         interval: Duration(milliseconds: 100),
-        showArrows: true,
+        showArrows: false,
         onDirectionChanged: (degree, distance) {
           double v = degree * 0.01745329252; // ( * pi / 180 )
           x = distance*sin(v);

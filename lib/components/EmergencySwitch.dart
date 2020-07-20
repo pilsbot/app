@@ -19,7 +19,7 @@ class _EmergencySwitchState extends State<EmergencySwitch> {
       colorIcon = Colors.black26;
     } else {
       colorFill = Colors.blue;
-      colorIcon = Colors.black;
+      colorIcon = Colors.black54;
     }
     return Container(
       width: MediaQuery.of(context).size.width*0.1,
