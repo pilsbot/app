@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pilsbot/model/Communication.dart';
 
@@ -19,15 +20,17 @@ class _SoundBarState extends State<SoundBar> {
   Widget build(BuildContext context) {
     Icon icon;
     if(volume == 0 || mute){
-      icon = Icon(Icons.volume_off, color: Colors.blue, size: 40);
+      icon = Icon(Icons.volume_off, color: Colors.blue);
     } else {
-      icon = Icon(Icons.volume_up, color: Colors.blue, size: 40);
+      icon = Icon(Icons.volume_up, color: Colors.blue);
     }
     return Container(
+      height: MediaQuery.of(context).size.height*0.68,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
           RotatedBox(
-              quarterTurns: -1,
+              quarterTurns: 3,
               child: Slider(
                 value: volume,
                 activeColor: Colors.blue,
@@ -39,6 +42,7 @@ class _SoundBarState extends State<SoundBar> {
           ),
           IconButton(
             icon: icon,
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
             onPressed: (){
               setState(() {
                 mute = !mute;

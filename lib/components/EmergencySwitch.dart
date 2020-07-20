@@ -18,10 +18,16 @@ class _EmergencySwitchState extends State<EmergencySwitch> {
       colorFill = Colors.grey;
       colorIcon = Colors.black26;
     } else {
-      colorFill = Colors.redAccent;
+      colorFill = Colors.blue;
       colorIcon = Colors.black;
     }
     return Container(
+      width: MediaQuery.of(context).size.width*0.1,
+      height: MediaQuery.of(context).size.height*0.1,
+      margin: EdgeInsets.symmetric(
+        vertical: MediaQuery.of(context).size.height*0.01,
+        horizontal: MediaQuery.of(context).size.width*0.01
+      ),
       child: RawMaterialButton(
         onPressed: () {
           restPost('emergencystop', !pressed);
@@ -33,10 +39,9 @@ class _EmergencySwitchState extends State<EmergencySwitch> {
         fillColor: colorFill,
         child: Icon(
           Icons.power_settings_new,
-          size: 40.0,
+          size: 30.0,
           color: colorIcon,
         ),
-        padding: EdgeInsets.all(15.0),
         shape: CircleBorder(),
       )
     );

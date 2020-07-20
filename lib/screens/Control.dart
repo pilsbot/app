@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:pilsbot/components/ControlModeSwitch.dart';
 import 'package:pilsbot/components/EmergencySwitch.dart';
 import 'package:pilsbot/model/Communication.dart';
 import 'package:pilsbot/components/SoundBar.dart';
@@ -7,6 +10,7 @@ import 'package:pilsbot/components/Joystick.dart';
 import 'package:pilsbot/components/Loading.dart';
 
 class ControlScreen extends StatefulWidget {
+
   @override
   _ControlScreenState createState() => _ControlScreenState();
 }
@@ -37,17 +41,24 @@ class _ControlScreenState extends State<ControlScreen> {
   Container showControlPage(){
     return Container(
       color: Colors.black,
-      child: Column(
+      child: Row(
         children: <Widget>[
-          Row(
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               SoundBar(),
-              EmergencySwitch(),
+              Joystick(),
             ]
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Container(width: MediaQuery.of(context).size.width*0.61),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
+              EmergencySwitch(),
+              ControlModeSwitch(),
+              Container(height: MediaQuery.of(context).size.width*0.22),
               Joystick(),
             ],
           )
@@ -58,6 +69,11 @@ class _ControlScreenState extends State<ControlScreen> {
 
   @override
   Widget build(BuildContext context) {
+    /* Fix landscape mode */
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight
+    ]);
     return Scaffold(
       body: FutureBuilder<Map<String, dynamic>>(
         future: restGet('controlstate'),
@@ -70,6 +86,18 @@ class _ControlScreenState extends State<ControlScreen> {
         }
       )
     );
+  }
+
+  @override
+  void dispose() {
+    /* Let all orientation mode for the other pages */
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight
+    ]);
+    super.dispose();
   }
 }
 

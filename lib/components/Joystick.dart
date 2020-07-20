@@ -36,6 +36,7 @@ class _JoystickState extends State<Joystick> {
   Widget build(BuildContext context) {
     return Container(
       child: JoystickView(
+        size:MediaQuery.of(context).size.height*0.32,
         backgroundColor: Colors.blue,
         innerCircleColor: Colors.blue,
         interval: Duration(milliseconds: 100),
