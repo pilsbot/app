@@ -58,7 +58,7 @@ class _ControlScreenState extends State<ControlScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Joystick(),
+                  Joystick(name: 'left'),
                 ]
               )
           ],),
@@ -73,7 +73,7 @@ class _ControlScreenState extends State<ControlScreen> {
               ControlModeSwitch(),
               LightsSwitch(),
               Container(height: MediaQuery.of(context).size.width*0.16),
-              Joystick(),
+              Joystick(name: 'right'),
             ],
           )
         ],
