@@ -1,108 +1,118 @@
-import 'dart:math';
-import 'dart:convert';
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:control_pad/views/joystick_view.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:pilsbot/components/ControlModeSwitch.dart';
+import 'package:pilsbot/components/EmergencySwitch.dart';
+import 'package:pilsbot/model/Common.dart';
+import 'package:pilsbot/model/Communication.dart';
+import 'package:pilsbot/components/SoundBar.dart';
+import 'package:pilsbot/components/Joystick.dart';
+import 'package:pilsbot/components/Loading.dart';
+import 'package:pilsbot/components/LightsSwitch.dart';
+import 'package:pilsbot/components/BatteryState.dart';
 
 class ControlScreen extends StatefulWidget {
+
   @override
   _ControlScreenState createState() => _ControlScreenState();
 }
 
 class _ControlScreenState extends State<ControlScreen> {
+  /// Tell if the app is connected with the pilsbot
   bool connected = false;
-  final String serverAddress = 'http://192.168.178.38:5000/';
-  final int serverTimeout = 2; // sec
-  final int joystick_refresh_period = 100; // milliseconds
-  final Map<String,String> headers = {
-    'Content-type' : 'application/json',
-    'Accept': 'application/json',
-  };
+  /// How often do we want to reach the pilsbot when we are not connected?
+  int period = 1000; // milliseconds
+  /// Timer to verify connection to the pilsbot every period of time
+  Timer timer;
 
-  Future<bool> send(id, params) async {
-    try {
-      http.Response res = await http.post(
-        serverAddress + id,
-        headers: headers,
-        body: json.encode(params),
-      ).timeout(
-          Duration(seconds: serverTimeout),
-          onTimeout: () {
-            connected = false;
-            return null;
-          }
-      );
-      // Change state if there is a change in the connection status
-      if(res.statusCode != 200 && connected){
-        setState((){ connected = false; });
+  @override
+  void initState(){
+    super.initState();
+    timer = Timer.periodic(Duration(milliseconds: period), (tim) async{
+      var response = await restGet(restGetControlState);
+      //print(connected);
+      if(response['error'] == connected) {
+        // changed from connected to not connected or vice versa
+        setState(() {
+          connected = !connected;
+        });
       }
-      if(res.statusCode == 200 && !connected){
-        setState((){ connected = true; });
-      }
-    } catch (_){
-      // TODO: what to do in case of socket exception? retry connection? go to home page?
-      if(connected) {
-        setState(() { connected = false; });
-      }
-    }
-    return connected;
+    });
   }
 
-  Container showJoystick() {
+  Container showControlPage(){
     return Container(
       color: Colors.black,
-      child: JoystickView(
-        backgroundColor: Colors.blue,
-        innerCircleColor: Colors.blue,
-        interval: Duration(milliseconds: joystick_refresh_period),
-        showArrows: true,
-        onDirectionChanged: (degree, distance) {
-          double v = degree * 0.01745329252; // ( * pi / 180 )
-          this.send('joystick', {'x': distance*sin(v), 'y': distance*cos(v)});
-        },
-      ),
-    );
-  }
-
-  Container showLoadingIndicator() {
-    return Container(
-      color: Colors.black,
-      child: Center(
-        child: Container(
-          height: 100,
-          child: Column(
-            children: <Widget>[
-              CircularProgressIndicator(),
-              Container(
-                margin: EdgeInsets.all(16.0),
-                child: Text(
-                  'Connecting...',
-                  style: TextStyle(
-                    color: Colors.blue,
-                  )
-                ),
-              ),
-            ],
+      child: Row(
+        children: <Widget>[
+          Column(children: <Widget>[
+            Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  SoundBar(),
+                  BatteryState(),
+                ]
+            ),
+            Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Joystick(name: 'left'),
+                ]
+              )
+          ],),
+          Container(
+            width: MediaQuery.of(context).size.width*0.6,
           ),
-        )
-      )
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              EmergencySwitch(),
+              ControlModeSwitch(),
+              LightsSwitch(),
+              Container(height: MediaQuery.of(context).size.width*0.16),
+              Joystick(name: 'right'),
+            ],
+          )
+        ],
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    /* Fix landscape mode */
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight
+    ]);
     return Scaffold(
-      body: FutureBuilder<bool>(
-        future: this.send('joystick', {'x': 0, 'y': 0}),
-        builder: (context, AsyncSnapshot<bool> snapshot) {
-          if (this.connected) {
-            return showJoystick();
+      body: FutureBuilder<Map<String, dynamic>>(
+        future: restGet('controlstate'),
+        builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+          if (connected) {
+            return showControlPage();
           } else {
-            return showLoadingIndicator();
+            return Loading();
           }
         }
       )
     );
+  }
+
+  @override
+  void dispose() {
+    /* Let all orientation mode for the other pages */
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight
+    ]);
+    super.dispose();
   }
 }
 
