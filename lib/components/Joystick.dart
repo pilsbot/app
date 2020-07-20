@@ -5,24 +5,29 @@ import 'package:control_pad/views/joystick_view.dart';
 import 'package:pilsbot/model/Communication.dart';
 
 class Joystick extends StatefulWidget {
+  final String name;
+
+  Joystick({this.name});
+
   @override
   _JoystickState createState() => _JoystickState();
 }
 
 class _JoystickState extends State<Joystick> {
-  /// The joystick refresh minimum period in milliseconds
-  int period = 200;
   /// x value of the joystick
   double x=0;
   /// y value of the joystick
   double y=0;
+  /// The joystick refresh minimum period in milliseconds
+  int period = 200;
+  /// Timer that sends out joystick values every period of time
   Timer timer;
 
   @override
   void initState(){
     super.initState();
     timer = Timer.periodic(Duration(milliseconds: period), (tim) async{
-      var response = await restPost('joystick', {'x': x, 'y': y});
+      var response = await restPost('joystick', {'id': widget.name, 'x': x, 'y': y});
       if(response['error']) {
         // Do not send data when there is an error.
         // Wait for the parent widget to reload this widget later when
@@ -30,6 +35,12 @@ class _JoystickState extends State<Joystick> {
         tim.cancel();
       }
     });
+  }
+
+  @override
+  void dispose(){
+    timer.cancel(); // TODO: not always working
+    super.dispose();
   }
 
   @override
