@@ -33,17 +33,17 @@ class _BatteryStateState extends State<BatteryState> {
       text = '?%';
     }
     return Container(
-      width: MediaQuery.of(context).size.width*0.1,
-      height: MediaQuery.of(context).size.height*0.2,
+      width: MediaQuery.of(context).size.width*0.2,
+      height: MediaQuery.of(context).size.height*0.1,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Text(text, style: TextStyle(color: color),),
           Icon(
             icon,
             size: 30.0,
             color: color,
             ),
+          Text(text, style: TextStyle(color: color),),
           ],
       )
     );

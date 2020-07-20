@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pilsbot/components/ControlModeSwitch.dart';
+import 'package:pilsbot/components/ControlingUser.dart';
 import 'package:pilsbot/components/EmergencySwitch.dart';
+import 'package:pilsbot/components/VelocityState.dart';
 import 'package:pilsbot/model/Common.dart';
 import 'package:pilsbot/model/Communication.dart';
 import 'package:pilsbot/components/SoundBar.dart';
@@ -52,7 +54,16 @@ class _ControlScreenState extends State<ControlScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   SoundBar(),
-                  BatteryState(),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      Container(height: MediaQuery.of(context).size.height*0.08),
+                      VelocityState(),
+                      BatteryState(),
+                      ControlingUser(),
+                    ],
+                  )
                 ]
             ),
             Column(
@@ -64,7 +75,7 @@ class _ControlScreenState extends State<ControlScreen> {
               )
           ],),
           Container(
-            width: MediaQuery.of(context).size.width*0.6,
+            width: MediaQuery.of(context).size.width*0.52,
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
