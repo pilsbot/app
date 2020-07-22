@@ -1,11 +1,11 @@
 
 import 'package:flutter/material.dart';
-class ControlingUser extends StatefulWidget {
+class ControllingUser extends StatefulWidget {
   @override
-  _ControlingUserState createState() => _ControlingUserState();
+  _ControllingUserState createState() => _ControllingUserState();
 }
 
-class _ControlingUserState extends State<ControlingUser> {
+class _ControllingUserState extends State<ControllingUser> {
   /// Name of the user that controls the robot
   String username = '?';
 
