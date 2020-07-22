@@ -7,7 +7,7 @@ class ControlingUser extends StatefulWidget {
 
 class _ControlingUserState extends State<ControlingUser> {
   /// Name of the user that controls the robot
-  String username = '';
+  String username = '?';
 
   @override
   Widget build(BuildContext context) {
