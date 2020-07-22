@@ -43,56 +43,6 @@ class _ControlScreenState extends State<ControlScreen> {
     });
   }
 
-  Container showControlPage(){
-    return Container(
-      color: Colors.black,
-      child: Row(
-        children: <Widget>[
-          Column(children: <Widget>[
-            Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  SoundBar(),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: <Widget>[
-                      Container(height: MediaQuery.of(context).size.height*0.08),
-                      VelocityState(),
-                      BatteryState(),
-                      ControlingUser(),
-                    ],
-                  )
-                ]
-            ),
-            Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Joystick(name: 'left'),
-                ]
-              )
-          ],),
-          Container(
-            width: MediaQuery.of(context).size.width*0.52,
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: <Widget>[
-              EmergencySwitch(),
-              ControlModeSwitch(),
-              LightsSwitch(),
-              Container(height: MediaQuery.of(context).size.width*0.16),
-              Joystick(name: 'right'),
-            ],
-          )
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     /* Fix landscape mode */
@@ -104,11 +54,59 @@ class _ControlScreenState extends State<ControlScreen> {
       body: FutureBuilder<Map<String, dynamic>>(
         future: restGet('controlstate'),
         builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
-          if (connected) {
-            return showControlPage();
-          } else {
-            return Loading();
+          Loading loading = null;
+          if (!connected) {
+            // Show loading symbol if not connected
+            loading = Loading();
           }
+          return Container(
+            color: Colors.black,
+            child: Row(
+              children: <Widget>[
+                Column(children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      SoundBar(),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          Container(height: MediaQuery.of(context).size.height*0.08),
+                          VelocityState(),
+                          BatteryState(),
+                          ControlingUser(),
+                        ],
+                      )
+                    ]
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Joystick(name: 'left'),
+                    ]
+                  )
+                ],),
+                Container(
+                  width: MediaQuery.of(context).size.width*0.52,
+                  child: loading
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+                    EmergencySwitch(),
+                    ControlModeSwitch(),
+                    LightsSwitch(),
+                    Container(height: MediaQuery.of(context).size.width*0.16),
+                    Joystick(name: 'right'),
+                  ],
+                )
+              ],
+            ),
+          );
         }
       )
     );
