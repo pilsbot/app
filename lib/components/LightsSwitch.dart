@@ -46,7 +46,7 @@ class _LightsSwitchState extends State<LightsSwitch> {
           colorIcon = Colors.black54;
           icon = Icons.lightbulb_outline;
         } else { // unknown status
-          colorFill = Colors.grey;
+          colorFill = Colors.blue;
           colorIcon = Colors.black54;
           icon = Icons.remove_red_eye;
         }

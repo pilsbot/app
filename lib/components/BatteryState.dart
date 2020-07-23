@@ -35,12 +35,12 @@ class _BatteryStateState extends State<BatteryState> {
           icon = Icons.battery_alert;
           text = value.toString()+'%';
         } else if (value > warning && value <= 100){
-          color = Colors.white70;
+          color = Colors.blue;
           icon = Icons.battery_std;
           text = value.toString()+'%';
         } else {
           // Unknown battery percentage
-          color = Colors.deepOrangeAccent;
+          color = Colors.blue;
           icon = Icons.battery_unknown;
           text = '?%';
         }

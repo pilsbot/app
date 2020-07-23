@@ -8,3 +8,4 @@ final String restLightOn = 'light_on';
 final String restError = 'error';
 final String restDrivingUser = 'driving_user';
 final String restBatteryState = 'battery';
+final String restVelocity = 'velocity';
