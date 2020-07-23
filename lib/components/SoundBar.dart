@@ -36,7 +36,7 @@ class _SoundBarState extends State<SoundBar> {
                 value: volume,
                 activeColor: Colors.blue,
                 onChanged: (v){
-                  restPost(restVolume, v);
+                  restPost(restVolume, {restVolume: v});
                   setState(() { volume = v; });
                 },
               )
@@ -50,13 +50,12 @@ class _SoundBarState extends State<SoundBar> {
                 if(!mute){
                   // Restore old volume after un-muting
                   volume = savedVolume;
-                  restPost('volume', savedVolume);
                 } else {
                   // Save the old volume for later and mute
                   savedVolume = volume;
                   volume = 0;
                 }
-                restPost('volume', volume);
+                restPost(restVolume, {restVolume: volume});
               });
             },
           ),
