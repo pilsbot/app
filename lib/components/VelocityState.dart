@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:pilsbot/model/Common.dart';
 import 'package:pilsbot/model/Communication.dart';
@@ -16,48 +18,55 @@ class _VelocityStateState extends State<VelocityState> {
   double minVal = -5.0; // m/s
   /// Text that will show the velocity.
   String text = '? m/s';
+  /// Timer to get velocity every time period
+  Timer timer;
+  /// How often do we want to check the velocity?
+  int period = 1000; // milliseconds
+
+  @override
+  void initState(){
+    super.initState();
+    timer = Timer.periodic(Duration(milliseconds: period), (tim) async{
+      var response = await restGet(restVelocity);
+      if(response[restVelocity] != null) {
+        if (response[restVelocity] != value) {
+          setState(() => value = response[restVelocity]);
+        }
+      } else {
+        setState(() => value = 69420); // unknown speed
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, dynamic>>(
-      future: restGet(restVelocity),
-      builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
-        if(snapshot.hasData){
-          if(snapshot.data[restVelocity] != null){
-            value = snapshot.data[restVelocity];
-          } else {
-            value = 69420.0;
-          }
-        }
-        Color color;
-        IconData icon;
-        if (value > maxVal || value < minVal){
-          // Unknown speed / no speed info
-          color = Colors.blue;
-          icon = Icons.av_timer;
-          text = '? m/s';
-        } else {
-          // Unknown speed
-          color = Colors.blue;
-          icon = Icons.av_timer;
-          text = value.toString()+'m/s';
-        }
-        return Container(
-          width: MediaQuery.of(context).size.width*0.2,
-          height: MediaQuery.of(context).size.height*0.1,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              Icon(
-                icon,
-                size: 30.0,
-                color: color,
-              ),
-              Text(text, style: TextStyle(color: color),),
-            ],
-          )
-        );
-      }
-    );
+    Color color;
+    IconData icon;
+    if (value > maxVal || value < minVal){
+      // Unknown speed / no speed info
+      color = Colors.blue;
+      icon = Icons.av_timer;
+      text = '? m/s';
+    } else {
+      // Unknown speed
+      color = Colors.blue;
+      icon = Icons.av_timer;
+      text = value.toString()+'m/s';
     }
+    return Container(
+      width: MediaQuery.of(context).size.width*0.2,
+      height: MediaQuery.of(context).size.height*0.1,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Icon(
+            icon,
+            size: 30.0,
+            color: color,
+          ),
+          Text(text, style: TextStyle(color: color),),
+        ],
+      )
+    );
+  }
 }
