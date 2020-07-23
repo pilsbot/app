@@ -7,3 +7,4 @@ final String restJoystickValues = 'joystick_values';
 final String restLightOn = 'light_on';
 final String restError = 'error';
 final String restDrivingUser = 'driving_user';
+final String restBatteryState = 'battery';

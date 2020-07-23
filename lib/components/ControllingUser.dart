@@ -13,7 +13,6 @@ class _ControllingUserState extends State<ControllingUser> {
 
   @override
   Widget build(BuildContext context) {
-    print('build driver widget');
     return FutureBuilder<Map<String, dynamic>>(
       future: restGet(restDrivingUser),
       builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {

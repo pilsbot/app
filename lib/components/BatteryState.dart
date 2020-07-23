@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pilsbot/model/Common.dart';
+import 'package:pilsbot/model/Communication.dart';
 
 class BatteryState extends StatefulWidget {
   @override
@@ -16,36 +18,48 @@ class _BatteryStateState extends State<BatteryState> {
 
   @override
   Widget build(BuildContext context) {
-    Color color;
-    IconData icon;
-    if (value >= 0 && value <= warning){
-      color = Colors.redAccent;
-      icon = Icons.battery_alert;
-      text = value.toString()+'%';
-    } else if (value > warning && value <= 100){
-      color = Colors.white70;
-      icon = Icons.battery_std;
-      text = value.toString()+'%';
-    } else {
-      // Unknown battery percentage
-      color = Colors.deepOrangeAccent;
-      icon = Icons.battery_unknown;
-      text = '?%';
-    }
-    return Container(
-      width: MediaQuery.of(context).size.width*0.2,
-      height: MediaQuery.of(context).size.height*0.1,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Icon(
-            icon,
-            size: 30.0,
-            color: color,
-            ),
-          Text(text, style: TextStyle(color: color),),
-          ],
-      )
+    return FutureBuilder<Map<String, dynamic>>(
+      future: restGet(restBatteryState),
+      builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+        if(snapshot.hasData){
+          if(snapshot.data[restBatteryState] != null){
+            value = snapshot.data[restBatteryState];
+          } else {
+            value = -1;
+          }
+        }
+        Color color;
+        IconData icon;
+        if (value >= 0 && value <= warning){
+          color = Colors.redAccent;
+          icon = Icons.battery_alert;
+          text = value.toString()+'%';
+        } else if (value > warning && value <= 100){
+          color = Colors.white70;
+          icon = Icons.battery_std;
+          text = value.toString()+'%';
+        } else {
+          // Unknown battery percentage
+          color = Colors.deepOrangeAccent;
+          icon = Icons.battery_unknown;
+          text = '?%';
+        }
+        return Container(
+          width: MediaQuery.of(context).size.width*0.2,
+          height: MediaQuery.of(context).size.height*0.1,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Icon(
+                icon,
+                size: 30.0,
+                color: color,
+              ),
+              Text(text, style: TextStyle(color: color),),
+            ],
+          )
+        );
+      }
     );
   }
 }
