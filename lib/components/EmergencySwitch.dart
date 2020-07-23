@@ -31,7 +31,7 @@ class _EmergencySwitchState extends State<EmergencySwitch> {
       ),
       child: RawMaterialButton(
         onPressed: () {
-          restPost(restSetEmergencyStop, !pressed);
+          restPost(restEmergencyStop, !pressed);
           setState(() {
             pressed = !pressed;
           });

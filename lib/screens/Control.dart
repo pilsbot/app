@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pilsbot/components/ControlModeSwitch.dart';
-import 'package:pilsbot/components/ControlingUser.dart';
+import 'package:pilsbot/components/ControllingUser.dart';
 import 'package:pilsbot/components/EmergencySwitch.dart';
 import 'package:pilsbot/components/VelocityState.dart';
 import 'package:pilsbot/model/Common.dart';
@@ -32,13 +32,11 @@ class _ControlScreenState extends State<ControlScreen> {
   void initState(){
     super.initState();
     timer = Timer.periodic(Duration(milliseconds: period), (tim) async{
-      var response = await restGet(restGetControlState);
+      var response = await restGet(restControlState);
       //print(connected);
-      if(response['error'] == connected) {
+      if(response[restError] == connected) {
         // changed from connected to not connected or vice versa
-        setState(() {
-          connected = !connected;
-        });
+        setState(() => connected = !connected);
       }
     });
   }
@@ -50,16 +48,10 @@ class _ControlScreenState extends State<ControlScreen> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight
     ]);
+    Loading loading = null;
+    if (!connected) { loading = Loading(); }
     return Scaffold(
-      body: FutureBuilder<Map<String, dynamic>>(
-        future: restGet('controlstate'),
-        builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
-          Loading loading = null;
-          if (!connected) {
-            // Show loading symbol if not connected
-            loading = Loading();
-          }
-          return Container(
+      body: Container(
             color: Colors.black,
             child: Row(
               children: <Widget>[
@@ -76,7 +68,7 @@ class _ControlScreenState extends State<ControlScreen> {
                           Container(height: MediaQuery.of(context).size.height*0.08),
                           VelocityState(),
                           BatteryState(),
-                          ControlingUser(),
+                          ControllingUser(),
                         ],
                       )
                     ]
@@ -106,9 +98,8 @@ class _ControlScreenState extends State<ControlScreen> {
                 )
               ],
             ),
-          );
-        }
-      )
+          )
+
     );
   }
 

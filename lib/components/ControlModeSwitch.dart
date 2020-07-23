@@ -41,7 +41,7 @@ class _ControlModeSwitchState extends State<ControlModeSwitch> {
         ),
         child: RawMaterialButton(
           onPressed: () {
-            restPost(restSetControlMode, modus); // TODO adapt interface
+            restPost(restControlMode, modus); // TODO adapt interface
             setState(() {
               modus = modus+1;
               if(modus > 2){

@@ -1,8 +1,8 @@
 
-final String restGetControlState = 'get_control_state';
-
-final String restSetVolume = 'set_volume';
-final String restSetControlMode = 'set_control_mode';
-final String restSetEmergencyStop = 'set_emergency_stop';
-final String restSetJoystickValues = 'set_joystick_values';
-final String restSetLightsOn = 'set_lights_on';
+final String restControlState = 'control_state';
+final String restVolume = 'volume';
+final String restControlMode = 'control_mode';
+final String restEmergencyStop = 'emergency_stop';
+final String restJoystickValues = 'joystick_values';
+final String restLightOn = 'light_on';
+final String restError = 'error';

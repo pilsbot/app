@@ -36,7 +36,7 @@ class _SoundBarState extends State<SoundBar> {
                 value: volume,
                 activeColor: Colors.blue,
                 onChanged: (v){
-                  restPost(restSetVolume, v);
+                  restPost(restVolume, v);
                   setState(() { volume = v; });
                 },
               )
