@@ -33,7 +33,6 @@ class _ControlScreenState extends State<ControlScreen> {
     super.initState();
     timer = Timer.periodic(Duration(milliseconds: period), (tim) async{
       var response = await restGet(restControlState);
-      //print(connected);
       if(response[restError] == connected) {
         // changed from connected to not connected or vice versa
         setState(() => connected = !connected);
