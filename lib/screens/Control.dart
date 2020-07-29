@@ -6,6 +6,7 @@ import 'package:pilsbot/components/ControlModeSwitch.dart';
 import 'package:pilsbot/components/ControllingUser.dart';
 import 'package:pilsbot/components/EmergencySwitch.dart';
 import 'package:pilsbot/components/VelocityState.dart';
+import 'package:pilsbot/components/Blinker.dart';
 import 'package:pilsbot/model/Common.dart';
 import 'package:pilsbot/model/Communication.dart';
 import 'package:pilsbot/components/SoundBar.dart';
@@ -91,7 +92,16 @@ class _ControlScreenState extends State<ControlScreen> {
                     EmergencySwitch(),
                     ControlModeSwitch(),
                     LightsSwitch(),
-                    Container(height: MediaQuery.of(context).size.width*0.16),
+                    Container(height: MediaQuery.of(context).size.width*0.04),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Blinker(orientation: 'left'),
+                        Blinker(orientation: 'right'),
+                      ],
+                    ),
+                    Container(height: MediaQuery.of(context).size.width*0.04),
                     Joystick(name: 'right'),
                   ],
                 )
