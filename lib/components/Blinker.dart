@@ -74,14 +74,14 @@ class _BlinkerState extends State<Blinker> {
             onPressed: () async {
               Map<String, dynamic> value;
               if(isOn==1){
-                value = await restPost(restLightOn, {restLightOn: false});
+                value = await restPost(restCall, {restCall: false});
               } else {
-                value = await restPost(restLightOn, {restLightOn: true});
+                value = await restPost(restCall, {restCall: true});
               }
               if(value[restError]) {
                 setState(() => isOn = -1);
               } else {
-                if(value[restLightOn]) {
+                if(value[restCall]) {
                   setState(() => isOn = 1);
                 } else {
                   setState(() => isOn = 0);
