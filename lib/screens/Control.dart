@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:pilsbot/components/ControlModeSwitch.dart';
 import 'package:pilsbot/components/ControllingUser.dart';
 import 'package:pilsbot/components/EmergencySwitch.dart';
+import 'package:pilsbot/components/PartyLight.dart';
 import 'package:pilsbot/components/VelocityState.dart';
 import 'package:pilsbot/components/Blinker.dart';
 import 'package:pilsbot/model/Common.dart';
@@ -89,10 +90,23 @@ class _ControlScreenState extends State<ControlScreen> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: <Widget>[
-                    EmergencySwitch(),
-                    ControlModeSwitch(),
-                    LightsSwitch(),
-                    Container(height: MediaQuery.of(context).size.width*0.04),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        ControlModeSwitch(),
+                        EmergencySwitch(),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        LightsSwitch(),
+                        PartyLight(),
+                      ],
+                    ),
+                    Container(height: MediaQuery.of(context).size.width*0.1),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.start,

@@ -51,7 +51,7 @@ class _LightsSwitchState extends State<LightsSwitch> {
           icon = Icons.remove_red_eye;
         }
         return Container(
-          width: MediaQuery.of(context).size.width*0.1,
+          width: MediaQuery.of(context).size.width*0.065,
           height: MediaQuery.of(context).size.height*0.1,
           margin: EdgeInsets.symmetric(
             vertical: MediaQuery.of(context).size.height*0.01,

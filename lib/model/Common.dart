@@ -10,3 +10,4 @@ final String restDrivingUser = 'driving_user';
 final String restBatteryState = 'battery';
 final String restVelocity = 'velocity';
 final String restBlinker = 'blinker'; //  _left or _right
+final String restPartyLightOn = 'party_light_on';
