@@ -15,6 +15,16 @@ import 'package:pilsbot/components/Joystick.dart';
 import 'package:pilsbot/components/Loading.dart';
 import 'package:pilsbot/components/LightsSwitch.dart';
 import 'package:pilsbot/components/BatteryState.dart';
+import 'package:web_socket_channel/io.dart';
+
+/*
+channel = IOWebSocketChannel.connect('ws://192.168.178.39:8765');
+channel.sink.add(data);
+channel.stream.listen((message) {
+    channel.sink.add("received!");
+    channel.sink.close(status.goingAway);
+  });
+*/
 
 class ControlScreen extends StatefulWidget {
 
@@ -53,38 +63,40 @@ class _ControlScreenState extends State<ControlScreen> {
     if (!connected) { loading = Loading(); }
     return Scaffold(
       body: Container(
-            color: Colors.black,
-            child: Row(
+        child: Stack(
+          children: <Widget>[
+            Container(color: Colors.black,),
+            Row(
               children: <Widget>[
                 Column(children: <Widget>[
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      SoundBar(),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          Container(height: MediaQuery.of(context).size.height*0.08),
-                          VelocityState(),
-                          BatteryState(),
-                          ControllingUser(),
-                        ],
-                      )
-                    ]
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        SoundBar(),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Container(height: MediaQuery.of(context).size.height*0.08),
+                            VelocityState(),
+                            BatteryState(),
+                            ControllingUser(),
+                          ],
+                        )
+                      ]
                   ),
                   Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Joystick(name: 'left'),
-                    ]
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Joystick(name: 'left'),
+                      ]
                   )
                 ],),
                 Container(
-                  width: MediaQuery.of(context).size.width*0.52,
-                  child: loading
+                    width: MediaQuery.of(context).size.width*0.52,
+                    child: loading
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -121,8 +133,9 @@ class _ControlScreenState extends State<ControlScreen> {
                 )
               ],
             ),
-          )
-
+          ],
+        ),
+      ),
     );
   }
 
@@ -138,4 +151,3 @@ class _ControlScreenState extends State<ControlScreen> {
     super.dispose();
   }
 }
-
