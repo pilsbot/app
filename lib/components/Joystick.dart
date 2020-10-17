@@ -28,15 +28,31 @@ class _JoystickState extends State<Joystick> {
   Timer timer;
   /// ROS topics to use
   Topic pub;
+  Topic sub;
+  /// Steering mode:
+  /// mode == {unknown, automatic, one_joystick, two_joysticks}
+  String mode='two_joysticks';
 
   @override
   void initState(){
     pub = Topic(ros: widget.ros, name: '/app/cmd/joystick', type: "sensors_msgs/Joy", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    sub = Topic(ros: widget.ros, name: '/control/mode', type: "std_msgs/String", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     super.initState();
+    initConnection();
     timer = Timer.periodic(Duration(milliseconds: period), (tim) async{
       var msg = {'axes': [xl, yl, xr, yr]};
       pub.publish(msg);
     });
+  }
+
+  void initConnection() async {
+    await sub.subscribe();
+    setState(() {});
+  }
+
+  void destroyConnection() async {
+    await sub.unsubscribe();
+    setState(() {});
   }
 
   @override
@@ -47,38 +63,55 @@ class _JoystickState extends State<Joystick> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          JoystickView(
-            size:MediaQuery.of(context).size.height*0.32,
-            backgroundColor: Colors.blue,
-            innerCircleColor: Colors.blue,
-            iconsColor: Colors.black54,
-            interval: Duration(milliseconds: 100),
-            showArrows: false,
-            onDirectionChanged: (degree, distance) {
-              double v = degree * 0.01745329252; // ( * pi / 180 )
-              xl = distance*sin(v);
-              yl = distance*cos(v);
-            },
-          ),
-          JoystickView(
-            size:MediaQuery.of(context).size.height*0.32,
-            backgroundColor: Colors.blue,
-            innerCircleColor: Colors.blue,
-            iconsColor: Colors.black54,
-            interval: Duration(milliseconds: 100),
-            showArrows: false,
-            onDirectionChanged: (degree, distance) {
-              double v = degree * 0.01745329252; // ( * pi / 180 )
-              xr = distance*sin(v);
-              yr = distance*cos(v);
-            },
-          ),
-        ]
-      )
+    return StreamBuilder<Object>(
+      stream: sub.subscription,
+      builder: (context, snapshot)
+      {
+        if(snapshot.hasData){
+          mode = Map<String, dynamic>.from(Map<String, dynamic>.from(snapshot.data)['msg'])['data'];
+        }
+        List<Widget> widgets = List<Widget>();
+        if(mode == 'one_joystick' || mode == 'two_joysticks'){
+          widgets.add(
+            JoystickView(size: MediaQuery.of(context).size.height * 0.32,
+              backgroundColor: Colors.blue,
+              innerCircleColor: Colors.blue,
+              iconsColor: Colors.black54,
+              interval: Duration(milliseconds: 100),
+              showArrows: false,
+              onDirectionChanged: (degree, distance) {
+                double v = degree * 0.01745329252; // ( * pi / 180 )
+                xl = distance * sin(v);
+                yl = distance * cos(v);
+              },
+            )
+          );
+        }
+        if (mode == 'two_joysticks'){
+          widgets.add(
+              JoystickView(size: MediaQuery.of(context).size.height * 0.32,
+                backgroundColor: Colors.blue,
+                innerCircleColor: Colors.blue,
+                iconsColor: Colors.black54,
+                interval: Duration(milliseconds: 100),
+                showArrows: false,
+                onDirectionChanged: (degree, distance) {
+                  double v = degree * 0.01745329252; // ( * pi / 180 )
+                  xr = distance * sin(v);
+                  yr = distance * cos(v);
+                },
+              )
+          );
+        } else {
+          widgets.add(Container());
+        }
+        return Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: widgets
+          )
+        );
+      }
     );
   }
 }

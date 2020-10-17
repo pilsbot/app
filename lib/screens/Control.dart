@@ -25,17 +25,18 @@ class _ControlScreenState extends State<ControlScreen> {
   Ros ros;
   Topic cameraStream;
   Topic joystickStream;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState(){
     ros = Ros(url: 'ws://192.168.178.39:9090');
-    cameraStream = Topic(ros: ros, name: '/usb_cam/image_raw', type: "sensor_msgs/Image", reconnectOnClose: true, queueLength: 200, queueSize: 200);
-    joystickStream = Topic(ros: ros, name: '/app/cmd/joystick', type: "sensor_msgs/Joy", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     super.initState();
-    initConnection();
   }
 
-  void initConnection() async {
+  void initConnection(String url) async {
+    ros.url = url;
+    cameraStream = Topic(ros: ros, name: '/usb_cam/image_raw', type: "sensor_msgs/Image", reconnectOnClose: true, queueLength: 200, queueSize: 200);
+    joystickStream = Topic(ros: ros, name: '/app/cmd/joystick', type: "sensor_msgs/Joy", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     ros.connect();
     //await cameraStream.subscribe();
     setState(() {});
@@ -53,6 +54,35 @@ class _ControlScreenState extends State<ControlScreen> {
       body: StreamBuilder<Object>(
         stream: ros.statusStream,
         builder: (context, snapshot) {
+          if (snapshot.data != Status.CONNECTED)
+          {
+            final myController = TextEditingController();
+            myController.text = 'ws://192.168.178.39:9090';
+            return Container(
+              alignment: Alignment.center,
+              color: Colors.grey,
+              padding:  EdgeInsets.all(100.0),
+              child: Form(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    TextFormField(
+                      controller: myController,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          this.initConnection(myController.text);
+                        },
+                        child: Text('Submit'),
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            );
+          }
           return Container(
             child: Stack(
               children: <Widget>[

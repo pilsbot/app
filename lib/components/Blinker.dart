@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:roslib/roslib.dart';
 
-import 'BlinkingWidget.dart';
-
 class Blinker extends StatefulWidget {
   final String orientation;
   Ros ros;
@@ -73,13 +71,6 @@ class _BlinkerState extends State<Blinker> {
         } else {
           icon = Icons.arrow_left;
         }
-        List<Widget> widgets = List<Widget>();
-        widgets.clear();
-        widgets.add(Icon(icon, size: 30.0, color: colorIcon));
-        if(isOn==1)
-        {
-          widgets.add(Icon(icon, size: 30.0, color: Colors.transparent));
-        }
         return Container(
           width: MediaQuery.of(context).size.width*0.065,
           height: MediaQuery.of(context).size.height*0.1,
@@ -97,9 +88,7 @@ class _BlinkerState extends State<Blinker> {
             },
             elevation: 2.0,
             fillColor: colorFill,
-            child: BlinkWidget(
-              children: widgets,
-            ),
+            child: Icon(icon, size: 30.0, color: colorIcon),
             shape: CircleBorder(),
           )
         );

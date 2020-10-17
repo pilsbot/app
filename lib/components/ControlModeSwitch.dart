@@ -13,7 +13,7 @@ class _ControlModeSwitchState extends State<ControlModeSwitch> {
   /// Steering modus:
   /// modus == {unknown, automatic, one_joystick, two_joysticks}
   String modus='unknown';
-  /// ROS topic to use to
+  /// ROS topics
   Topic sub;
   Topic pub;
 
