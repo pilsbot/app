@@ -6,19 +6,22 @@ import 'package:roslib/roslib.dart';
 
 class Joystick extends StatefulWidget {
   Ros ros;
-  final String name;
 
-  Joystick({@required this.ros, this.name});
+  Joystick({@required this.ros});
 
   @override
   _JoystickState createState() => _JoystickState();
 }
 
 class _JoystickState extends State<Joystick> {
-  /// x value of the joystick
-  double x=0;
-  /// y value of the joystick
-  double y=0;
+  /// x value of the left joystick
+  double xl=0;
+  /// y value of the left joystick
+  double yl=0;
+  /// x value of the right joystick
+  double xr=0;
+  /// y value of the right joystick
+  double yr=0;
   /// The joystick refresh minimum period in milliseconds
   int period = 200;
   /// Timer that sends out joystick values every period of time
@@ -28,10 +31,11 @@ class _JoystickState extends State<Joystick> {
 
   @override
   void initState(){
-    pub = Topic(ros: widget.ros, name: '/app/cmd/joystick/'+widget.name, type: "geometry_msgs/Pose2D", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    pub = Topic(ros: widget.ros, name: '/app/cmd/joystick', type: "sensors_msgs/Joy", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     super.initState();
     timer = Timer.periodic(Duration(milliseconds: period), (tim) async{
-      pub.publish({'x': x, 'y': y});
+      var msg = {'axes': [xl, yl, xr, yr]};
+      pub.publish(msg);
     });
   }
 
@@ -44,19 +48,37 @@ class _JoystickState extends State<Joystick> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: JoystickView(
-        size:MediaQuery.of(context).size.height*0.32,
-        backgroundColor: Colors.blue,
-        innerCircleColor: Colors.blue,
-        iconsColor: Colors.black54,
-        interval: Duration(milliseconds: 100),
-        showArrows: false,
-        onDirectionChanged: (degree, distance) {
-          double v = degree * 0.01745329252; // ( * pi / 180 )
-          x = distance*sin(v);
-          y = distance*cos(v);
-        },
-      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          JoystickView(
+            size:MediaQuery.of(context).size.height*0.32,
+            backgroundColor: Colors.blue,
+            innerCircleColor: Colors.blue,
+            iconsColor: Colors.black54,
+            interval: Duration(milliseconds: 100),
+            showArrows: false,
+            onDirectionChanged: (degree, distance) {
+              double v = degree * 0.01745329252; // ( * pi / 180 )
+              xl = distance*sin(v);
+              yl = distance*cos(v);
+            },
+          ),
+          JoystickView(
+            size:MediaQuery.of(context).size.height*0.32,
+            backgroundColor: Colors.blue,
+            innerCircleColor: Colors.blue,
+            iconsColor: Colors.black54,
+            interval: Duration(milliseconds: 100),
+            showArrows: false,
+            onDirectionChanged: (degree, distance) {
+              double v = degree * 0.01745329252; // ( * pi / 180 )
+              xr = distance*sin(v);
+              yr = distance*cos(v);
+            },
+          ),
+        ]
+      )
     );
   }
 }

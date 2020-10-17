@@ -57,7 +57,7 @@ class _ControlScreenState extends State<ControlScreen> {
             child: Stack(
               children: <Widget>[
                 StreamBuilder<Object>(
-                  stream: camera_stream.subscription,
+                  stream: cameraStream.subscription,
                   builder: (context, snapshot) {
                     Image.Image cameraImage;
                     Image.Image background;
@@ -80,10 +80,12 @@ class _ControlScreenState extends State<ControlScreen> {
                     return Container(color: Colors.black);
                   }
                 ),
-                Row(
+                Column(
                   children: <Widget>[
-                    Column(children: <Widget>[
-                      Row(
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
@@ -99,52 +101,42 @@ class _ControlScreenState extends State<ControlScreen> {
                               ],
                             )
                           ]
-                      ),
-                      Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Joystick(ros: ros, name: 'left'),
-                          ]
-                      )
-                    ],),
-                    Container(
-                        width: MediaQuery.of(context).size.width*0.52,
-                        child: Loading(show: false)
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: <Widget>[
-                        Row(
+                        ),
+                        Column(
                           mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: <Widget>[
-                            ControlModeSwitch(ros: ros),
-                            EmergencySwitch(ros: ros),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                ControlModeSwitch(ros: ros),
+                                EmergencySwitch(ros: ros),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                LightsSwitch(ros: ros),
+                                PartyLight(ros: ros),
+                              ],
+                            ),
+                            Container(height: MediaQuery.of(context).size.width*0.1),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Blinker(ros: ros, orientation: 'left'),
+                                Blinker(ros: ros, orientation: 'right'),
+                              ],
+                            ),
                           ],
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            LightsSwitch(ros: ros),
-                            PartyLight(ros: ros),
-                          ],
-                        ),
-                        Container(height: MediaQuery.of(context).size.width*0.1),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Blinker(ros: ros, orientation: 'left'),
-                            Blinker(ros: ros, orientation: 'right'),
-                          ],
-                        ),
-                        Container(height: MediaQuery.of(context).size.width*0.04),
-                        Joystick(ros: ros, name: 'right'),
+                        //Container(height: MediaQuery.of(context).size.width*0.04),
                       ],
-                    )
+                    ),
+                    Joystick(ros: ros),
                   ],
                 ),
               ],
