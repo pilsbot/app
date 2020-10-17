@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:pilsbot/model/Common.dart';
-import 'package:pilsbot/model/Communication.dart';
+import 'package:roslib/roslib.dart';
+
 
 class PartyLight extends StatefulWidget {
+  Ros ros;
+  PartyLight({@required  this.ros});
+
   @override
   _PartyLightState createState() => _PartyLightState();
 }
@@ -11,44 +14,54 @@ class _PartyLightState extends State<PartyLight> {
   /// Are the lights on?
   /// 1=yes, 0=no, -1=no info
   int isLightOn;
+  /// ROS topic to subscribe to
+  Topic sub;
+  Topic pub;
 
   @override
   void initState(){
+    sub = Topic(ros: widget.ros, name: '/lighting/party', type: "std_msgs/Bool", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    pub = Topic(ros: widget.ros, name: '/app/cmd/lighting/party', type: "std_msgs/Bool", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     super.initState();
     isLightOn = -1;
+    initConnection();
+  }
+
+  void initConnection() async {
+    await sub.subscribe();
+    setState(() {});
+  }
+
+  void destroyConnection() async {
+    await sub.unsubscribe();
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Map<String, dynamic>>(
-        future: restGet(restPartyLightOn),
-        builder: (context, AsyncSnapshot<Map<String, dynamic>> snapshot) {
+    return StreamBuilder<Object>(
+        stream: sub.subscription,
+        builder: (context, snapshot) {
           Color colorFill;
           Color colorIcon;
-          IconData icon;
+          isLightOn = -1;
           if(snapshot.hasData){
-            if(snapshot.data[restPartyLightOn] != null){
-              if(snapshot.data[restPartyLightOn]){
-                isLightOn = 1;
-              } else {
-                isLightOn = 0;
-              }
+            var value = Map<String, dynamic>.from(Map<String, dynamic>.from(snapshot.data)['msg'])['data'];
+            if(value == true){
+              isLightOn = 1;
             } else {
-              isLightOn = -1;
+              isLightOn = 0;
             }
           }
           if(isLightOn==1){
-            colorFill = Colors.grey;
+            colorFill = Colors.blue;
             colorIcon = Colors.orange;
-            icon = Icons.whatshot;
           } else if(isLightOn==0){
             colorFill = Colors.blue;
             colorIcon = Colors.black54;
-            icon = Icons.whatshot;
           } else { // unknown status
-            colorFill = Colors.blue;
-            colorIcon = Colors.black54;
-            icon = Icons.remove_red_eye;
+            colorFill = Colors.grey;
+            colorIcon = Colors.black12;
           }
           return Container(
               width: MediaQuery.of(context).size.width*0.065,
@@ -59,26 +72,16 @@ class _PartyLightState extends State<PartyLight> {
               ),
               child: RawMaterialButton(
                 onPressed: () async {
-                  Map<String, dynamic> value;
                   if(isLightOn==1){
-                    value = await restPost(restPartyLightOn, {restPartyLightOn: false});
+                    pub.publish({'data': false});
                   } else {
-                    value = await restPost(restPartyLightOn, {restPartyLightOn: true});
-                  }
-                  if(value[restError]) {
-                    setState(() => isLightOn = -1);
-                  } else{
-                    if(value[restPartyLightOn]) {
-                      setState(() => isLightOn = 1);
-                    } else {
-                      setState(() => isLightOn = 0);
-                    }
+                    pub.publish({'data': true});
                   }
                 },
                 elevation: 2.0,
                 fillColor: colorFill,
                 child: Icon(
-                  icon,
+                  Icons.mood,
                   size: 30.0,
                   color: colorIcon,
                 ),

@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -8,23 +7,13 @@ import 'package:pilsbot/components/EmergencySwitch.dart';
 import 'package:pilsbot/components/PartyLight.dart';
 import 'package:pilsbot/components/VelocityState.dart';
 import 'package:pilsbot/components/Blinker.dart';
-import 'package:pilsbot/model/Common.dart';
-import 'package:pilsbot/model/Communication.dart';
 import 'package:pilsbot/components/SoundBar.dart';
 import 'package:pilsbot/components/Joystick.dart';
 import 'package:pilsbot/components/Loading.dart';
 import 'package:pilsbot/components/LightsSwitch.dart';
 import 'package:pilsbot/components/BatteryState.dart';
-import 'package:web_socket_channel/io.dart';
-
-/*
-channel = IOWebSocketChannel.connect('ws://192.168.178.39:8765');
-channel.sink.add(data);
-channel.stream.listen((message) {
-    channel.sink.add("received!");
-    channel.sink.close(status.goingAway);
-  });
-*/
+import 'package:roslib/roslib.dart';
+import 'package:image/image.dart' as Image;
 
 class ControlScreen extends StatefulWidget {
 
@@ -33,109 +22,136 @@ class ControlScreen extends StatefulWidget {
 }
 
 class _ControlScreenState extends State<ControlScreen> {
-  /// Tell if the app is connected with the pilsbot
-  bool connected = false;
-  /// How often do we want to reach the pilsbot when we are not connected?
-  int period = 1000; // milliseconds
-  /// Timer to verify connection to the pilsbot every period of time
-  Timer timer;
+  Ros ros;
+  Topic cameraStream;
+  Topic joystickStream;
 
   @override
   void initState(){
+    ros = Ros(url: 'ws://192.168.178.39:9090');
+    cameraStream = Topic(ros: ros, name: '/usb_cam/image_raw', type: "sensor_msgs/Image", reconnectOnClose: true, queueLength: 200, queueSize: 200);
+    joystickStream = Topic(ros: ros, name: '/app/cmd/joystick', type: "sensor_msgs/Joy", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     super.initState();
-    timer = Timer.periodic(Duration(milliseconds: period), (tim) async{
-      var response = await restGet(restControlState);
-      if(response[restError] == connected) {
-        // changed from connected to not connected or vice versa
-        setState(() => connected = !connected);
-      }
-    });
+    initConnection();
+  }
+
+  void initConnection() async {
+    ros.connect();
+    //await cameraStream.subscribe();
+    setState(() {});
+  }
+
+  void destroyConnection() async {
+    await ros.close();
+    //await cameraStream.unsubscribe();
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    /* Fix landscape mode */
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.landscapeLeft,
-      DeviceOrientation.landscapeRight
-    ]);
-    Loading loading = null;
-    if (!connected) { loading = Loading(); }
     return Scaffold(
-      body: Container(
-        child: Stack(
-          children: <Widget>[
-            Container(color: Colors.black,),
-            Row(
+      body: StreamBuilder<Object>(
+        stream: ros.statusStream,
+        builder: (context, snapshot) {
+          return Container(
+            child: Stack(
               children: <Widget>[
-                Column(children: <Widget>[
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        SoundBar(),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: <Widget>[
-                            Container(height: MediaQuery.of(context).size.height*0.08),
-                            VelocityState(),
-                            BatteryState(),
-                            ControllingUser(),
-                          ],
-                        )
-                      ]
-                  ),
-                  Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Joystick(name: 'left'),
-                      ]
-                  )
-                ],),
-                Container(
-                    width: MediaQuery.of(context).size.width*0.52,
-                    child: loading
+                StreamBuilder<Object>(
+                  stream: camera_stream.subscription,
+                  builder: (context, snapshot) {
+                    Image.Image cameraImage;
+                    Image.Image background;
+                    if(snapshot.hasData){
+                      print('has data');
+                      print(snapshot.data);
+                      /*var msg = Map<String, dynamic>.from(snapshot.data)['msg'];
+                      var data = Map<String, dynamic>.from(msg)['data'];
+                      var height = Map<String, dynamic>.from(msg)['height'];
+                      var width = Map<String, dynamic>.from(msg)['width'];*/
+                      //var type = Map<String, dynamic>.from(value)['format'];
+                      /*print(height);
+                      print(width);*/
+                      return Container(color: Colors.black,
+                        /*decoration: new BoxDecoration(
+                          image: new DecorationImage(image: , fit: BoxFit.cover,),
+                        ),*/
+                      );
+                    }
+                    return Container(color: Colors.black);
+                  }
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.end,
+                Row(
                   children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        ControlModeSwitch(),
-                        EmergencySwitch(),
-                      ],
+                    Column(children: <Widget>[
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            SoundBar(ros: ros),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[
+                                Container(height: MediaQuery.of(context).size.height*0.08),
+                                VelocityState(ros: ros),
+                                BatteryState(ros: ros),
+                                ControllingUser(ros: ros),
+                              ],
+                            )
+                          ]
+                      ),
+                      Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Joystick(ros: ros, name: 'left'),
+                          ]
+                      )
+                    ],),
+                    Container(
+                        width: MediaQuery.of(context).size.width*0.52,
+                        child: Loading(show: false)
                     ),
-                    Row(
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: <Widget>[
-                        LightsSwitch(),
-                        PartyLight(),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            ControlModeSwitch(ros: ros),
+                            EmergencySwitch(ros: ros),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            LightsSwitch(ros: ros),
+                            PartyLight(ros: ros),
+                          ],
+                        ),
+                        Container(height: MediaQuery.of(context).size.width*0.1),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Blinker(ros: ros, orientation: 'left'),
+                            Blinker(ros: ros, orientation: 'right'),
+                          ],
+                        ),
+                        Container(height: MediaQuery.of(context).size.width*0.04),
+                        Joystick(ros: ros, name: 'right'),
                       ],
-                    ),
-                    Container(height: MediaQuery.of(context).size.width*0.1),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Blinker(orientation: 'left'),
-                        Blinker(orientation: 'right'),
-                      ],
-                    ),
-                    Container(height: MediaQuery.of(context).size.width*0.04),
-                    Joystick(name: 'right'),
+                    )
                   ],
-                )
+                ),
               ],
-            ),
-          ],
-        ),
-      ),
+            )
+          );
+        }
+      )
     );
   }
 

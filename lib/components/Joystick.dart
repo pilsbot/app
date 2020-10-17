@@ -2,13 +2,13 @@ import 'dart:math';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:control_pad/views/joystick_view.dart';
-import 'package:pilsbot/model/Common.dart';
-import 'package:pilsbot/model/Communication.dart';
+import 'package:roslib/roslib.dart';
 
 class Joystick extends StatefulWidget {
+  Ros ros;
   final String name;
 
-  Joystick({this.name});
+  Joystick({@required this.ros, this.name});
 
   @override
   _JoystickState createState() => _JoystickState();
@@ -23,18 +23,15 @@ class _JoystickState extends State<Joystick> {
   int period = 200;
   /// Timer that sends out joystick values every period of time
   Timer timer;
+  /// ROS topics to use
+  Topic pub;
 
   @override
   void initState(){
+    pub = Topic(ros: widget.ros, name: '/app/cmd/joystick/'+widget.name, type: "geometry_msgs/Pose2D", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     super.initState();
     timer = Timer.periodic(Duration(milliseconds: period), (tim) async{
-      var response = await restPost(restJoystickValues, {'id': widget.name, 'x': x, 'y': y});
-      if(response['error']) {
-        // Do not send data when there is an error.
-        // Wait for the parent widget to reload this widget later when
-        // the errors are solved
-        tim.cancel();
-      }
+      pub.publish({'x': x, 'y': y});
     });
   }
 

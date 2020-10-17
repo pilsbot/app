@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:pilsbot/model/Common.dart';
-import 'package:pilsbot/model/Communication.dart';
+import 'package:roslib/roslib.dart';
 
 class VelocityState extends StatefulWidget {
+  Ros ros;
+  VelocityState({@required this.ros});
+
   @override
   _VelocityStateState createState() => _VelocityStateState();
 }
@@ -22,51 +24,64 @@ class _VelocityStateState extends State<VelocityState> {
   Timer timer;
   /// How often do we want to check the velocity?
   int period = 1000; // milliseconds
+  Topic topic;
 
   @override
   void initState(){
+    topic = Topic(ros: widget.ros, name: '/control/speed', type: "std_msgs/Float32", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     super.initState();
-    timer = Timer.periodic(Duration(milliseconds: period), (tim) async{
-      var response = await restGet(restVelocity);
-      if(response[restVelocity] != null) {
-        if (response[restVelocity] != value) {
-          setState(() => value = response[restVelocity]);
-        }
-      } else {
-        setState(() => value = 69420); // unknown speed
-      }
-    });
+    initConnection();
+  }
+
+  void initConnection() async {
+    await topic.subscribe();
+    setState(() {});
+  }
+
+  void destroyConnection() async {
+    await topic.unsubscribe();
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    Color color;
-    IconData icon;
-    if (value > maxVal || value < minVal){
-      // Unknown speed / no speed info
-      color = Colors.blue;
-      icon = Icons.av_timer;
-      text = '? m/s';
-    } else {
-      // Unknown speed
-      color = Colors.blue;
-      icon = Icons.av_timer;
-      text = value.toString()+'m/s';
-    }
-    return Container(
-      width: MediaQuery.of(context).size.width*0.2,
-      height: MediaQuery.of(context).size.height*0.1,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: <Widget>[
-          Icon(
-            icon,
-            size: 30.0,
-            color: color,
-          ),
-          Text(text, style: TextStyle(color: color),),
-        ],
-      )
+    return StreamBuilder<Object>(
+      stream: topic.subscription,
+      builder: (context, snapshot) {
+        Color color = Colors.grey;
+        if (snapshot.hasData)
+        {
+          // Workaround to for the convertion from object to json
+          value = Map<String, dynamic>.from(Map<String, dynamic>.from(snapshot.data)['msg'])['data'];
+          color = Colors.blue;
+        }
+        IconData icon;
+        if (value > maxVal || value < minVal){
+          // Unknown speed / no speed info
+          icon = Icons.av_timer;
+          text = '? m/s';
+        } else {
+          // Unknown speed
+          Color color = Colors.grey;
+          icon = Icons.av_timer;
+          text = value.toStringAsFixed(1)+'m/s';
+        }
+        return Container(
+          width: MediaQuery.of(context).size.width*0.2,
+          height: MediaQuery.of(context).size.height*0.1,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Icon(
+                icon,
+                size: 30.0,
+                color: color,
+              ),
+              Text(text, style: TextStyle(color: color),),
+            ],
+          )
+        );
+      },
     );
   }
 }
