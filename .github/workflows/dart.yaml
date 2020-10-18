@@ -1,0 +1,31 @@
+
+name: Dart CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+name: build and test app
+jobs:
+  build:
+    name: install dependencies
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout
+
+    - name: install dependencies
+      uses: flutter/flutter
+      with:
+        args: pub get
+
+    - name: run tests
+      uses: flutter/flutter
+      with:
+        args: test
+
+    - name: build apk
+      uses: flutter/flutter
+      with:
+        args: build apk --release
