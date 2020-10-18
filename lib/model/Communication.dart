@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-final String serverAddress = 'http://192.168.178.38:5001/';
+final String serverAddress = 'http://192.168.178.39:5001/';
 final int serverTimeout = 2; // sec
 final Map<String,String> headers = {
   'Content-type' : 'application/json',

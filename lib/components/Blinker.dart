@@ -1,26 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:roslib/roslib.dart';
 
-class LightsSwitch extends StatefulWidget {
+class Blinker extends StatefulWidget {
+  final String orientation;
   Ros ros;
-  LightsSwitch({@required  this.ros});
+
+  Blinker({@required  this.ros, @required this.orientation});
 
   @override
-  _LightsSwitchState createState() => _LightsSwitchState();
+  _BlinkerState createState() => _BlinkerState();
 }
 
-class _LightsSwitchState extends State<LightsSwitch> {
+class _BlinkerState extends State<Blinker> {
   /// Are the lights on?
   /// 1=yes, 0=no, -1=no info
-  int isLightOn;
-  /// ROS topic to subscribe to
+  int isOn;
+  /// ROS topics to use
   Topic sub;
   Topic pub;
+  /// Icon that will be shown (left or right blinker)
+  IconData icon;
 
   @override
   void initState(){
-    sub = Topic(ros: widget.ros, name: '/lighting/headlight', type: "std_msgs/Bool", reconnectOnClose: true, queueLength: 10, queueSize: 10);
-    pub = Topic(ros: widget.ros, name: '/app/cmd/lighting/headlight', type: "std_msgs/Bool", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    sub = Topic(ros: widget.ros, name: '/lighting/indicator/'+widget.orientation, type: "std_msgs/Bool", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    pub = Topic(ros: widget.ros, name: '/app/cmd/lighting/indicator/'+widget.orientation, type: "std_msgs/Bool", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     super.initState();
     initConnection();
   }
@@ -42,24 +46,30 @@ class _LightsSwitchState extends State<LightsSwitch> {
       builder: (context, snapshot) {
         Color colorFill;
         Color colorIcon;
-        isLightOn = -1;
+        isOn = -1;
         if(snapshot.hasData){
           var value = Map<String, dynamic>.from(Map<String, dynamic>.from(snapshot.data)['msg'])['data'];
           if(value == true){
-            isLightOn = 1;
+            isOn = 1;
           } else {
-            isLightOn = 0;
+            isOn = 0;
           }
         }
-        if(isLightOn==1){
+        if(isOn==1){
           colorFill = Colors.blue;
           colorIcon = Colors.orange;
-        } else if(isLightOn==0){
+        } else if(isOn==0){
           colorFill = Colors.blue;
           colorIcon = Colors.black54;
         } else { // unknown status
           colorFill = Colors.grey;
           colorIcon = Colors.black12;
+        }
+        IconData icon;
+        if(widget.orientation == 'right'){
+          icon = Icons.arrow_right;
+        } else {
+          icon = Icons.arrow_left;
         }
         return Container(
           width: MediaQuery.of(context).size.width*0.065,
@@ -70,7 +80,7 @@ class _LightsSwitchState extends State<LightsSwitch> {
           ),
           child: RawMaterialButton(
             onPressed: () async {
-              if(isLightOn==1){
+              if(isOn==1){
                 pub.publish({'data': false});
               } else {
                 pub.publish({'data': true});
@@ -78,11 +88,7 @@ class _LightsSwitchState extends State<LightsSwitch> {
             },
             elevation: 2.0,
             fillColor: colorFill,
-            child: Icon(
-              Icons.wb_sunny,
-              size: 30.0,
-              color: colorIcon,
-            ),
+            child: Icon(icon, size: 30.0, color: colorIcon),
             shape: CircleBorder(),
           )
         );

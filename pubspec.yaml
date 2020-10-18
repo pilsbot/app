@@ -36,6 +36,7 @@ dev_dependencies:
   sqflite: ^1.3.0
   path:
   http:
+  roslib:
   flutter_launcher_icons: ^0.7.5
 
 flutter_icons:
