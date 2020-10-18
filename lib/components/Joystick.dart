@@ -40,7 +40,7 @@ class _JoystickState extends State<Joystick> {
     super.initState();
     initConnection();
     timer = Timer.periodic(Duration(milliseconds: period), (tim) async{
-      var msg = {'axes': [xl, yl, xr, yr]};
+      var msg = {'header': {'frame_id': 'app_joystick'}, 'axes': [xl, yl, xr, yr, 0, 0], 'buttons': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]};
       pub.publish(msg);
     });
   }

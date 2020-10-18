@@ -44,9 +44,9 @@ class _SoundBarState extends State<SoundBar> {
   Widget build(BuildContext context) {
     Icon icon;
     if(volume == 0 || mute){
-      icon = Icon(Icons.volume_off, color: Colors.blue);
+      icon = Icon(Icons.volume_off, color: Colors.grey);
     } else {
-      icon = Icon(Icons.volume_up, color: Colors.blue);
+      icon = Icon(Icons.volume_up, color: Colors.grey);
     }
     return Container(
       height: MediaQuery.of(context).size.height*0.68,
@@ -57,7 +57,7 @@ class _SoundBarState extends State<SoundBar> {
               quarterTurns: 3,
               child: Slider(
                 value: volume,
-                activeColor: Colors.blue,
+                activeColor: Colors.grey,
                 onChanged: (v){
                   pub.publish({'data': volume});
                   setState(() { volume = v; });

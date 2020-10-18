@@ -10,6 +10,7 @@ import 'package:pilsbot/components/Blinker.dart';
 import 'package:pilsbot/components/SoundBar.dart';
 import 'package:pilsbot/components/Joystick.dart';
 import 'package:pilsbot/components/Loading.dart';
+import 'package:pilsbot/components/SettingsButton.dart';
 import 'package:pilsbot/components/LightsSwitch.dart';
 import 'package:pilsbot/components/BatteryState.dart';
 import 'package:roslib/roslib.dart';
@@ -50,6 +51,11 @@ class _ControlScreenState extends State<ControlScreen> {
 
   @override
   Widget build(BuildContext context) {
+    /* Fix landscape mode */
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.landscapeLeft,
+      DeviceOrientation.landscapeRight
+    ]);
     return Scaffold(
       body: StreamBuilder<Object>(
         stream: ros.statusStream,
@@ -60,22 +66,32 @@ class _ControlScreenState extends State<ControlScreen> {
             myController.text = 'ws://192.168.178.39:9090';
             return Container(
               alignment: Alignment.center,
-              color: Colors.grey,
-              padding:  EdgeInsets.all(100.0),
+              color: Colors.black,
+              padding:  EdgeInsets.fromLTRB(140, 20, 140, 0),
               child: Form(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     TextFormField(
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.blue,
+                      ),
+                      textAlign: TextAlign.center,
+                      decoration: InputDecoration(
+                        fillColor: Colors.blue,
+                        focusColor: Colors.blue,
+                        hoverColor: Colors.orange,
+                      ),
                       controller: myController,
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      padding: const EdgeInsets.fromLTRB(100, 3, 100, 3),
                       child: ElevatedButton(
                         onPressed: () {
                           this.initConnection(myController.text);
                         },
-                        child: Text('Submit'),
+                        child: Text('Submit', style:  TextStyle(fontSize: 20, color: Colors.white70)),
                       ),
                     ),
                   ],
@@ -128,6 +144,7 @@ class _ControlScreenState extends State<ControlScreen> {
                                 VelocityState(ros: ros),
                                 BatteryState(ros: ros),
                                 ControllingUser(ros: ros),
+                                SettingsButton(),
                               ],
                             )
                           ]

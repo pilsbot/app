@@ -55,8 +55,8 @@ class _ControlModeSwitchState extends State<ControlModeSwitch> {
           colorText = Colors.orange;
         } else {
           colorFill = Colors.grey;
-          colorText = Colors.black26;
-          text = '?';
+          colorText = Colors.black12;
+          text = 'M?';
         }
         return Container(
             width: MediaQuery.of(context).size.width*0.065,
