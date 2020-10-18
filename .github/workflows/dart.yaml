@@ -7,7 +7,6 @@ on:
   pull_request:
     branches: [ master ]
 
-name: build and test app
 jobs:
   build:
     name: install dependencies
