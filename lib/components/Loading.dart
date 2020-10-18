@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pilsbot/model/Communication.dart';
 
 class Loading extends StatefulWidget {
   bool show;

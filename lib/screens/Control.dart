@@ -9,12 +9,11 @@ import 'package:pilsbot/components/VelocityState.dart';
 import 'package:pilsbot/components/Blinker.dart';
 import 'package:pilsbot/components/SoundBar.dart';
 import 'package:pilsbot/components/Joystick.dart';
-import 'package:pilsbot/components/Loading.dart';
 import 'package:pilsbot/components/SettingsButton.dart';
 import 'package:pilsbot/components/LightsSwitch.dart';
 import 'package:pilsbot/components/BatteryState.dart';
 import 'package:roslib/roslib.dart';
-import 'package:image/image.dart' as Image;
+//import 'package:image/image.dart' as Image;
 
 class ControlScreen extends StatefulWidget {
 
@@ -26,7 +25,6 @@ class _ControlScreenState extends State<ControlScreen> {
   Ros ros;
   Topic cameraStream;
   Topic joystickStream;
-  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState(){
@@ -105,8 +103,8 @@ class _ControlScreenState extends State<ControlScreen> {
                 StreamBuilder<Object>(
                   stream: cameraStream.subscription,
                   builder: (context, snapshot) {
-                    Image.Image cameraImage;
-                    Image.Image background;
+                    //Image.Image cameraImage;
+                    //Image.Image background;
                     if(snapshot.hasData){
                       print('has data');
                       print(snapshot.data);

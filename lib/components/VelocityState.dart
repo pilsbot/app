@@ -62,7 +62,6 @@ class _VelocityStateState extends State<VelocityState> {
           text = '? m/s';
         } else {
           // Unknown speed
-          Color color = Colors.grey;
           icon = Icons.av_timer;
           text = value.toStringAsFixed(1)+'m/s';
         }
