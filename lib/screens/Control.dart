@@ -1,17 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:pilsbot/components/ControlModeSwitch.dart';
-import 'package:pilsbot/components/ControllingUser.dart';
-import 'package:pilsbot/components/EmergencySwitch.dart';
-import 'package:pilsbot/components/PartyLight.dart';
-import 'package:pilsbot/components/VelocityState.dart';
-import 'package:pilsbot/components/Blinker.dart';
+import 'package:pilsbot/components/ButtonControlMode.dart';
+import 'package:pilsbot/components/StateDriver.dart';
+import 'package:pilsbot/components/ButtonOnOff.dart';
+import 'package:pilsbot/components/ButtonParty.dart';
+import 'package:pilsbot/components/StateSpeed.dart';
+import 'package:pilsbot/components/ButtonBlinker.dart';
 import 'package:pilsbot/components/SoundBar.dart';
 import 'package:pilsbot/components/Joystick.dart';
-import 'package:pilsbot/components/SettingsButton.dart';
-import 'package:pilsbot/components/LightsSwitch.dart';
-import 'package:pilsbot/components/BatteryState.dart';
+import 'package:pilsbot/components/ButtonSettings.dart';
+import 'package:pilsbot/components/ButtonHeadlight.dart';
+import 'package:pilsbot/components/StateBattery.dart';
+import 'package:pilsbot/model/Communication.dart';
+import 'package:pilsbot/screens/Login.dart';
 import 'package:roslib/roslib.dart';
 //import 'package:image/image.dart' as Image;
 
@@ -22,27 +26,37 @@ class ControlScreen extends StatefulWidget {
 }
 
 class _ControlScreenState extends State<ControlScreen> {
-  Ros ros;
+  var com;
   Topic cameraStream;
   Topic joystickStream;
+  Timer timer;
+  int period = 1000;
 
   @override
   void initState(){
-    ros = Ros(url: 'ws://192.168.178.39:9090');
+    com = RosCom();
     super.initState();
+    timer = Timer.periodic(Duration(milliseconds: period), (tim) async{
+      if(com.ros.status != Status.CONNECTED){
+        timer.cancel();
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginScreen()),
+        );
+      }
+    });
+    initConnection();
   }
 
-  void initConnection(String url) async {
-    ros.url = url;
-    cameraStream = Topic(ros: ros, name: '/usb_cam/image_raw', type: "sensor_msgs/Image", reconnectOnClose: true, queueLength: 200, queueSize: 200);
-    joystickStream = Topic(ros: ros, name: '/app/cmd/joystick', type: "sensor_msgs/Joy", reconnectOnClose: true, queueLength: 10, queueSize: 10);
-    ros.connect();
+  void initConnection() async {
+    cameraStream = Topic(ros: com.ros, name: '/usb_cam/image_raw', type: "sensor_msgs/Image", reconnectOnClose: true, queueLength: 200, queueSize: 200);
+    joystickStream = Topic(ros: com.ros, name: '/app/cmd/joystick', type: "sensor_msgs/Joy", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     //await cameraStream.subscribe();
     setState(() {});
   }
 
   void destroyConnection() async {
-    await ros.close();
+    await com.ros.close();
     //await cameraStream.unsubscribe();
     setState(() {});
   }
@@ -55,139 +69,95 @@ class _ControlScreenState extends State<ControlScreen> {
       DeviceOrientation.landscapeRight
     ]);
     return Scaffold(
-      body: StreamBuilder<Object>(
-        stream: ros.statusStream,
-        builder: (context, snapshot) {
-          if (snapshot.data != Status.CONNECTED)
-          {
-            final myController = TextEditingController();
-            myController.text = 'ws://192.168.178.39:9090';
-            return Container(
-              alignment: Alignment.center,
-              color: Colors.black,
-              padding:  EdgeInsets.fromLTRB(140, 20, 140, 0),
-              child: Form(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    TextFormField(
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.blue,
-                      ),
-                      textAlign: TextAlign.center,
-                      decoration: InputDecoration(
-                        fillColor: Colors.blue,
-                        focusColor: Colors.blue,
-                        hoverColor: Colors.orange,
-                      ),
-                      controller: myController,
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(100, 3, 100, 3),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          this.initConnection(myController.text);
-                        },
-                        child: Text('Submit', style:  TextStyle(fontSize: 20, color: Colors.white70)),
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            );
-          }
-          return Container(
-            child: Stack(
+      body: Container(
+        child: Stack(
+          children: <Widget>[
+            StreamBuilder<Object>(
+              stream: cameraStream.subscription,
+              builder: (context, snapshot) {
+                //Image.Image cameraImage;
+                //Image.Image background;
+                if(snapshot.hasData){
+                  print('has data');
+                  print(snapshot.data);
+                  /*var msg = Map<String, dynamic>.from(snapshot.data)['msg'];
+                     var data = Map<String, dynamic>.from(msg)['data'];
+                     var height = Map<String, dynamic>.from(msg)['height'];
+                     var width = Map<String, dynamic>.from(msg)['width'];*/
+                  //var type = Map<String, dynamic>.from(value)['format'];
+                  /*print(height);
+                     print(width);*/
+                  return Container(color: Colors.black,
+                    /*decoration: new BoxDecoration(
+                     image: new DecorationImage(image: , fit: BoxFit.cover,),
+                    ),*/
+                  );
+                }
+                return Container(color: Colors.black);
+              }
+              ),
+            Column(
               children: <Widget>[
-                StreamBuilder<Object>(
-                  stream: cameraStream.subscription,
-                  builder: (context, snapshot) {
-                    //Image.Image cameraImage;
-                    //Image.Image background;
-                    if(snapshot.hasData){
-                      print('has data');
-                      print(snapshot.data);
-                      /*var msg = Map<String, dynamic>.from(snapshot.data)['msg'];
-                      var data = Map<String, dynamic>.from(msg)['data'];
-                      var height = Map<String, dynamic>.from(msg)['height'];
-                      var width = Map<String, dynamic>.from(msg)['width'];*/
-                      //var type = Map<String, dynamic>.from(value)['format'];
-                      /*print(height);
-                      print(width);*/
-                      return Container(color: Colors.black,
-                        /*decoration: new BoxDecoration(
-                          image: new DecorationImage(image: , fit: BoxFit.cover,),
-                        ),*/
-                      );
-                    }
-                    return Container(color: Colors.black);
-                  }
-                ),
-                Column(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            SoundBar(ros: ros),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: <Widget>[
-                                Container(height: MediaQuery.of(context).size.height*0.08),
-                                VelocityState(ros: ros),
-                                BatteryState(ros: ros),
-                                ControllingUser(ros: ros),
-                                SettingsButton(),
-                              ],
-                            )
-                          ]
-                        ),
+                        SoundBar(),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.end,
                           crossAxisAlignment: CrossAxisAlignment.end,
                           children: <Widget>[
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                ControlModeSwitch(ros: ros),
-                                EmergencySwitch(ros: ros),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                LightsSwitch(ros: ros),
-                                PartyLight(ros: ros),
-                              ],
-                            ),
-                            Container(height: MediaQuery.of(context).size.width*0.1),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Blinker(ros: ros, orientation: 'left'),
-                                Blinker(ros: ros, orientation: 'right'),
-                              ],
-                            ),
+                            Container(height: MediaQuery.of(context).size.height*0.08),
+                            StateSpeed(),
+                            StateBattery(),
+                            StateDriver(),
+                            ButtonSettings(),
+                          ],
+                        )
+                      ]
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            ButtonControlMode(),
+                            ButtonOnOff(),
                           ],
                         ),
-                        //Container(height: MediaQuery.of(context).size.width*0.04),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            ButtonHeadlight(),
+                            ButtonParty(),
+                          ],
+                        ),
+                        Container(height: MediaQuery.of(context).size.width*0.1),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            ButtonBlinker(orientation: 'left'),
+                            ButtonBlinker(orientation: 'right'),
+                          ],
+                        ),
                       ],
                     ),
-                    Joystick(ros: ros),
+                    //Container(height: MediaQuery.of(context).size.width*0.04),
                   ],
                 ),
+                Joystick(),
               ],
-            )
-          );
-        }
+            ),
+          ],
+        )
       )
     );
   }

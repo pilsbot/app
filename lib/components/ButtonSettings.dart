@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class SettingsButton extends StatefulWidget {
-  SettingsButton();
+class ButtonSettings extends StatefulWidget {
+  ButtonSettings();
 
   @override
-  _SettingsButtonState createState() => _SettingsButtonState();
+  _ButtonSettingsState createState() => _ButtonSettingsState();
 }
 
-class _SettingsButtonState extends State<SettingsButton> {
+class _ButtonSettingsState extends State<ButtonSettings> {
 
   @override
   void initState(){

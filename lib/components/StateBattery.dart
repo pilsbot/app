@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:pilsbot/model/Communication.dart';
 import 'package:roslib/roslib.dart';
 
-class BatteryState extends StatefulWidget {
-  Ros ros;
-  BatteryState({@required this.ros});
+class StateBattery extends StatefulWidget {
+  StateBattery();
 
   @override
-  _BatteryStateState createState() => _BatteryStateState();
+  _StateBatteryState createState() => _StateBatteryState();
 }
 
-class _BatteryStateState extends State<BatteryState> {
+class _StateBatteryState extends State<StateBattery> {
   /// Battery percentage value
   int value = -1;
   /// Battery voltage text
@@ -19,10 +19,13 @@ class _BatteryStateState extends State<BatteryState> {
   final int warning = 20;
   /// Ros topic to listen to
   Topic topic;
+  /// Communication with ROS
+  var com;
 
   @override
   void initState(){
-    topic = Topic(ros: widget.ros, name: '/battery/percentage', type: "std_msgs/Float32", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    com = RosCom();
+    topic = Topic(ros: com.ros, name: '/battery/percentage', type: "std_msgs/Float32", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     super.initState();
     initConnection();
   }

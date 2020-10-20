@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:pilsbot/model/Communication.dart';
 import 'package:roslib/roslib.dart';
 
-class ControllingUser extends StatefulWidget {
-  Ros ros;
-  ControllingUser({@required this.ros});
+class StateDriver extends StatefulWidget {
+  StateDriver();
 
   @override
-  _ControllingUserState createState() => _ControllingUserState();
+  _StateDriverState createState() => _StateDriverState();
 }
 
-class _ControllingUserState extends State<ControllingUser> {
+class _StateDriverState extends State<StateDriver> {
   Topic topic;
+  /// Communication with ROS
+  var com;
 
   @override
   void initState(){
-    topic = Topic(ros: widget.ros, name: '/app/driver', type: "std_msgs/String", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    com = RosCom();
+    topic = Topic(ros: com.ros, name: '/app/driver', type: "std_msgs/String", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     super.initState();
     initConnection();
   }

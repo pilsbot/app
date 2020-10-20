@@ -1,26 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:pilsbot/model/Communication.dart';
 import 'package:roslib/roslib.dart';
 
-class LightsSwitch extends StatefulWidget {
-  Ros ros;
-  LightsSwitch({@required  this.ros});
+class ButtonHeadlight extends StatefulWidget {
+  ButtonHeadlight();
 
   @override
-  _LightsSwitchState createState() => _LightsSwitchState();
+  _ButtonHeadlightState createState() => _ButtonHeadlightState();
 }
 
-class _LightsSwitchState extends State<LightsSwitch> {
+class _ButtonHeadlightState extends State<ButtonHeadlight> {
   /// Are the lights on?
   /// 1=yes, 0=no, -1=no info
   int isLightOn;
   /// ROS topic to subscribe to
   Topic sub;
   Topic pub;
+  /// Communication with ROS
+  var com;
 
   @override
   void initState(){
-    sub = Topic(ros: widget.ros, name: '/lighting/headlight', type: "std_msgs/Bool", reconnectOnClose: true, queueLength: 10, queueSize: 10);
-    pub = Topic(ros: widget.ros, name: '/app/cmd/lighting/headlight', type: "std_msgs/Bool", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    com = RosCom();
+    sub = Topic(ros: com.ros, name: '/lighting/headlight', type: "std_msgs/Bool", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    pub = Topic(ros: com.ros, name: '/app/cmd/lighting/headlight', type: "std_msgs/Bool", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     super.initState();
     initConnection();
   }

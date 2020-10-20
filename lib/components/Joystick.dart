@@ -2,12 +2,11 @@ import 'dart:math';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:control_pad/views/joystick_view.dart';
+import 'package:pilsbot/model/Communication.dart';
 import 'package:roslib/roslib.dart';
 
 class Joystick extends StatefulWidget {
-  Ros ros;
-
-  Joystick({@required this.ros});
+  Joystick();
 
   @override
   _JoystickState createState() => _JoystickState();
@@ -29,14 +28,17 @@ class _JoystickState extends State<Joystick> {
   /// ROS topics to use
   Topic pub;
   Topic sub;
+  /// Communication with ROS
+  var com;
   /// Steering mode:
   /// mode == {unknown, automatic, one_joystick, two_joysticks}
   String mode='two_joysticks';
 
   @override
   void initState(){
-    pub = Topic(ros: widget.ros, name: '/app/cmd/joystick', type: "sensors_msgs/Joy", reconnectOnClose: true, queueLength: 10, queueSize: 10);
-    sub = Topic(ros: widget.ros, name: '/control/mode', type: "std_msgs/String", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    com = RosCom();
+    pub = Topic(ros: com.ros, name: '/app/cmd/joystick', type: "sensors_msgs/Joy", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    sub = Topic(ros: com.ros, name: '/control/mode', type: "std_msgs/String", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     super.initState();
     initConnection();
     timer = Timer.periodic(Duration(milliseconds: period), (tim) async{

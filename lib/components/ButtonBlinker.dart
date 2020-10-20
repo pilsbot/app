@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:pilsbot/model/Communication.dart';
 import 'package:roslib/roslib.dart';
 
-class Blinker extends StatefulWidget {
+class ButtonBlinker extends StatefulWidget {
   final String orientation;
-  Ros ros;
 
-  Blinker({@required  this.ros, @required this.orientation});
+  ButtonBlinker({this.orientation});
 
   @override
-  _BlinkerState createState() => _BlinkerState();
+  _ButtonBlinkerState createState() => _ButtonBlinkerState();
 }
 
-class _BlinkerState extends State<Blinker> {
+class _ButtonBlinkerState extends State<ButtonBlinker> {
   /// Are the lights on?
   /// 1=yes, 0=no, -1=no info
   int isOn;
@@ -20,11 +20,14 @@ class _BlinkerState extends State<Blinker> {
   Topic pub;
   /// Icon that will be shown (left or right blinker)
   IconData icon;
+  /// Communication with ROS
+  var com;
 
   @override
   void initState(){
-    sub = Topic(ros: widget.ros, name: '/lighting/indicator/'+widget.orientation, type: "std_msgs/Bool", reconnectOnClose: true, queueLength: 10, queueSize: 10);
-    pub = Topic(ros: widget.ros, name: '/app/cmd/lighting/indicator/'+widget.orientation, type: "std_msgs/Bool", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    com = RosCom();
+    sub = Topic(ros: com.ros, name: '/lighting/indicator/'+widget.orientation, type: "std_msgs/Bool", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    pub = Topic(ros: com.ros, name: '/app/cmd/lighting/indicator/'+widget.orientation, type: "std_msgs/Bool", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     super.initState();
     initConnection();
   }

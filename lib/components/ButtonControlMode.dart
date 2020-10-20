@@ -1,26 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:pilsbot/model/Communication.dart';
 import 'package:roslib/roslib.dart';
 
-class ControlModeSwitch extends StatefulWidget {
-  Ros ros;
-  ControlModeSwitch({@required  this.ros});
+class ButtonControlMode extends StatefulWidget {
+  ButtonControlMode();
 
   @override
-  _ControlModeSwitchState createState() => _ControlModeSwitchState();
+  _ButtonControlModeState createState() => _ButtonControlModeState();
 }
 
-class _ControlModeSwitchState extends State<ControlModeSwitch> {
+class _ButtonControlModeState extends State<ButtonControlMode> {
   /// Steering modus:
   /// modus == {unknown, automatic, one_joystick, two_joysticks}
   String modus='unknown';
   /// ROS topics
   Topic sub;
   Topic pub;
+  /// Communication with ROS
+  var com;
 
   @override
   void initState(){
-    sub = Topic(ros: widget.ros, name: '/control/mode', type: "std_msgs/String", reconnectOnClose: true, queueLength: 10, queueSize: 10);
-    pub = Topic(ros: widget.ros, name: '/app/cmd/control/mode', type: "std_msgs/String", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    com = RosCom();
+    sub = Topic(ros: com.ros, name: '/control/mode', type: "std_msgs/String", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    pub = Topic(ros: com.ros, name: '/app/cmd/control/mode', type: "std_msgs/String", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     super.initState();
     initConnection();
   }
