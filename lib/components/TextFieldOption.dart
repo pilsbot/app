@@ -43,7 +43,8 @@ class _TextFieldOptionState extends State<TextFieldOption> {
               style: TextStyle(
                 fontWeight: FontWeight.normal,
                 color: Colors.black54,
-                fontSize: 20, decoration: TextDecoration.none
+                fontSize: MediaQuery.of(context).size.width*0.032,
+                decoration: TextDecoration.none
               ),
             ),
           ),
@@ -58,7 +59,10 @@ class _TextFieldOptionState extends State<TextFieldOption> {
                     print(GlobalConfiguration().getValue(widget.value));
                   },
                   controller: this.controller,
-                  style: TextStyle(color: Colors.black54, fontSize: 20),
+                  style: TextStyle(
+                    color: Colors.black54,
+                    fontSize: MediaQuery.of(context).size.width*0.032
+                  ),
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
                     fillColor: Colors.white70,

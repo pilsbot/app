@@ -54,7 +54,7 @@ class _ButtonConnectState extends State<ButtonConnect> {
   Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width*0.4,
-      height: MediaQuery.of(context).size.height*0.15,
+      height: 45,
       child: RawMaterialButton(
         fillColor: Colors.blue,
         shape: RoundedRectangleBorder(

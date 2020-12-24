@@ -20,8 +20,8 @@ class _ButtonSettingsState extends State<ButtonSettings> {
           Color colorFill = Colors.blue;
           Color colorIcon = Colors.black54;
           return Container(
-              width: MediaQuery.of(context).size.width*0.1,
-              height: MediaQuery.of(context).size.height*0.15,
+              width: 45,
+              height: 45,
               padding: EdgeInsets.fromLTRB(0, 0, MediaQuery.of(context).size.width*0, 0),
               child: RawMaterialButton(
                 onPressed: () async {
@@ -34,7 +34,7 @@ class _ButtonSettingsState extends State<ButtonSettings> {
                 fillColor: colorFill,
                 child: Icon(
                   Icons.settings,
-                  size: 40.0,
+                  size: 38.0,
                   color: colorIcon,
                 ),
                 shape: CircleBorder(),

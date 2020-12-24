@@ -25,7 +25,7 @@ class _SliderOptionState extends State<SliderOption> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: MediaQuery.of(context).size.width*0.50,
+            width: MediaQuery.of(context).size.width*0.5,
             height: 45,
             decoration: BoxDecoration(
               shape: BoxShape.rectangle,
@@ -43,7 +43,8 @@ class _SliderOptionState extends State<SliderOption> {
               style: TextStyle(
                   fontWeight: FontWeight.normal,
                   color: Colors.black54,
-                  fontSize: 20, decoration: TextDecoration.none
+                  fontSize: MediaQuery.of(context).size.width*0.032,
+                  decoration: TextDecoration.none
               ),
             ),
           ),
