@@ -36,6 +36,7 @@ class _ControlScreenState extends State<ControlScreen> {
   void initState(){
     com = RosCom();
     super.initState();
+    initConnection();
     timer = Timer.periodic(Duration(milliseconds: period), (tim) async{
       if(com.ros.status != Status.CONNECTED){
         timer.cancel();
@@ -45,7 +46,6 @@ class _ControlScreenState extends State<ControlScreen> {
         );
       }
     });
-    initConnection();
   }
 
   void initConnection() async {
@@ -164,6 +164,8 @@ class _ControlScreenState extends State<ControlScreen> {
 
   @override
   void dispose() {
+    timer.cancel();
+    destroyConnection();
     /* Let all orientation mode for the other pages */
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,

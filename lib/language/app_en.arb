@@ -1,0 +1,6 @@
+{
+  "login": "Login",
+  "@login": {
+    "description": "The text on the login button on the start page"
+  }
+}

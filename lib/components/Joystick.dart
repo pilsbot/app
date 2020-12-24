@@ -42,6 +42,9 @@ class _JoystickState extends State<Joystick> {
     super.initState();
     initConnection();
     timer = Timer.periodic(Duration(milliseconds: period), (tim) async{
+      if(com.ros.status != Status.CONNECTED) {
+        timer.cancel();
+      }
       var msg = {'header': {'frame_id': 'app_joystick'}, 'axes': [xl, yl, xr, yr, 0, 0], 'buttons': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]};
       pub.publish(msg);
     });
@@ -59,7 +62,8 @@ class _JoystickState extends State<Joystick> {
 
   @override
   void dispose(){
-    timer.cancel(); // TODO: not always working
+    timer.cancel();
+    destroyConnection();
     super.dispose();
   }
 

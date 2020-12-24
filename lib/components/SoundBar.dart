@@ -27,8 +27,8 @@ class _SoundBarState extends State<SoundBar> {
   @override
   void initState(){
     com = RosCom();
-    sub = Topic(ros: com.ros, name: '/system/sound/', type: "std_msgs/Float32", reconnectOnClose: true, queueLength: 10, queueSize: 10);
-    pub = Topic(ros: com.ros, name: '/app/cmd/sound/value/', type: "std_msgs/Float32", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    sub = Topic(ros: com.ros, name: '/system/sound', type: "std_msgs/Float32", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    pub = Topic(ros: com.ros, name: '/app/cmd/sound/value', type: "std_msgs/Float32", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     super.initState();
     initConnection();
   }

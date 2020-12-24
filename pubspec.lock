@@ -104,11 +104,23 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.7.5"
+  flutter_localizations:
+    dependency: "direct main"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
     source: sdk
     version: "0.0.0"
+  global_configuration:
+    dependency: "direct dev"
+    description:
+      name: global_configuration
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.6.0"
   http:
     dependency: "direct dev"
     description:
@@ -130,6 +142,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.18"
+  intl:
+    dependency: "direct main"
+    description:
+      name: intl
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.16.1"
   matcher:
     dependency: transitive
     description:
@@ -168,9 +187,9 @@ packages:
   roslib:
     dependency: "direct dev"
     description:
-      name: roslib
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "/home/chris/AndroidStudioProjects/roslib"
+      relative: false
+    source: path
     version: "0.0.3"
   sky_engine:
     dependency: transitive

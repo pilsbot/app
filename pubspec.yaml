@@ -23,7 +23,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  control_pad:
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.16.1 # internationalization
+  control_pad: # joystick
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -37,10 +40,12 @@ dev_dependencies:
   path:
   http:
   roslib:
+    path: ../roslib # use own fork of roslib : https://github.com/PimpMyPizza/roslib
   flutter_launcher_icons: ^0.7.5
+  global_configuration: ^1.6.0 # save config in configuration files
 
 flutter_icons:
-  image_path: "images/logo.png"
+  image_path: "assets/images/logo.png"
   android: true
   ios: true
 
@@ -56,7 +61,10 @@ flutter:
   uses-material-design: true
 
   assets:
-    - images/logo.png
+    - assets/images/logo.png
+    - assets/cfg/
+
+  generate: true # for intl. See https://flutter.dev/docs/development/accessibility-and-localization/internationalization
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
