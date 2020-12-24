@@ -1,3 +1,8 @@
 {
-  "login": "Connexion"
+  "login": "Connexion",
+  "options": "Options",
+  "server_ip": "IP du serveur",
+  "websocket_port": "Port WebSocket",
+  "rest_api_port": "Port de l'API REST",
+  "joystick_sensitivity": "Sensibilité du joystick"
 }

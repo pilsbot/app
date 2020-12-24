@@ -107,8 +107,8 @@ class _ControlScreenState extends State<ControlScreen> {
                       children: <Widget>[
                         SoundBar(),
                         Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Container(height: MediaQuery.of(context).size.height*0.08),
                             StateSpeed(),

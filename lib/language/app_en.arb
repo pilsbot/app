@@ -1,6 +1,26 @@
 {
-  "login": "Login",
+  "login": "Connect",
   "@login": {
-    "description": "The text on the login button on the start page"
+    "description": "The text on the login button on the login page"
+  },
+  "options": "Options",
+  "@options": {
+    "description": "The text on the options button on the login page"
+  },
+  "server_ip": "Server IP",
+  "@server_ip": {
+    "description": "The text saying server IP in the option screen"
+  },
+  "websocket_port": "WebSocket port",
+  "@websocket_port": {
+    "description": "The text saying WebSocket port in the option screen"
+  },
+  "rest_api_port": "REST API port",
+  "@rest_api_port": {
+    "description": "The text saying REST API port in the option screen"
+  },
+  "joystick_sensitivity": "Joystick sensitivity",
+  "@joystick_sensitivity": {
+    "description": "The text saying joystick sensitivity  in the option screen"
   }
 }
