@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:roslib/roslib.dart';
 import 'package:pilsbot/model/Communication.dart';
-import 'package:roslib/roslib.dart';
 
 class ButtonParty extends StatefulWidget {
   ButtonParty();

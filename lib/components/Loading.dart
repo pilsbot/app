@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Loading extends StatefulWidget {
-  bool show;
+  final bool show;
   Loading({this.show});
 
   @override
