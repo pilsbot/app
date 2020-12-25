@@ -8,7 +8,7 @@ on:
     branches: [ master ]
 
 jobs:
-  flutter_test:
+  build_android:
     name: Run flutter test and analyze
     runs-on: ubuntu-latest
     steps:
@@ -36,12 +36,35 @@ jobs:
       - run: cd pilsbot && flutter test
         name: Run tests
       - run: cd pilsbot && flutter clean
-        name: Clean for iOS
-      - run: cd pilsbot && flutter build ios --no-codesign
-        name: Build iOS
-      - run: cd pilsbot && flutter clean
         name: Clean for Android APK
       - run: cd pilsbot && flutter build apk --target-platform android-arm,android-arm64,android-x64 --split-per-abi
         name: Build Android APK
       #- run: cd pilsbot && flutter clean
       #- run: cd pilsbot && flutter build appbundle
+  build_ios:
+    name: Run flutter test and analyze
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v2
+        name: Checkout app dependency (roslib)
+        with:
+          repository: PimpMyPizza/roslib
+          path: ./roslib
+      - uses: actions/checkout@v2
+        name: Checkout app
+        with:
+          path: ./pilsbot
+      - uses: actions/setup-java@v1
+        name: Setup java
+        with:
+          java-version: "12.x"
+      - uses: subosito/flutter-action@v1
+        name: Checkout flutter
+        with:
+          channel: "stable"
+      - run: cd pilsbot && flutter pub get
+        name: pub get
+      - run: cd pilsbot && flutter clean
+        name: Clean for iOS
+      - run: cd pilsbot && flutter build ios --no-codesign
+        name: Build iOS
