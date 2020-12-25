@@ -12,19 +12,19 @@ jobs:
     name: install dependencies
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
+      - uses: actions/checkout@v1
 
-    - name: install dependencies
-      uses: steebchen/flutter@v1.1.0
-      with:
-        args: pub get
+      - name: install dependencies
+        uses: subosito/flutter@v1.4.0
+        with:
+          args: pub get
 
-    - name: run tests
-      uses: steebchen/flutter@v1.1.0
-      with:
-        args: test
+      - name: run tests
+        uses: subosito/flutter@v1.4.0
+        with:
+          args: test
 
-    - name: build apk
-      uses: steebchen/flutter@v1.1.0
-      with:
-        args: build apk --release --target-platform android-arm,android-arm64,android-x64 --split-per-abi
+      - name: build apk
+        uses: subosito/flutter@v1.4.0
+        with:
+          args: build apk --release --target-platform android-arm,android-arm64,android-x64 --split-per-abi
