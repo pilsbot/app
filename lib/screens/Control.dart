@@ -16,6 +16,8 @@ import 'package:pilsbot/components/StateBattery.dart';
 import 'package:pilsbot/model/Communication.dart';
 import 'package:pilsbot/screens/Login.dart';
 import 'package:roslib/roslib.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:global_configuration/global_configuration.dart';
 //import 'package:image/image.dart' as Image;
 
 class ControlScreen extends StatefulWidget {
@@ -39,6 +41,9 @@ class _ControlScreenState extends State<ControlScreen> {
     timer = Timer.periodic(Duration(milliseconds: period), (tim) async{
       if(com.ros.status != Status.CONNECTED){
         timer.cancel();
+        String err = AppLocalizations.of(context).lost_connection.toString();
+        print(err);
+        GlobalConfiguration().updateValue("error_msg", err);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => LoginScreen()),

@@ -4,5 +4,10 @@
   "server_ip": "Server IP",
   "websocket_port": "WebSocket-Server Port",
   "rest_api_port": "REST-Server Port",
-  "joystick_sensitivity": "Joystickempfindlichkeit"
+  "joystick_sensitivity": "Joystickempfindlichkeit",
+  "connecting": "Die Verbindung wird hergestellt...",
+  "username": "Benutzer",
+  "password": "Passwort",
+  "connection_failed": "Die Verbindung konnte nicht hergestellt werden.",
+  "lost_connection": "Die Verbindung wurde abgebrochen."
 }

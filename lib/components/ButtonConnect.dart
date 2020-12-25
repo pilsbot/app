@@ -1,71 +1,44 @@
-import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:roslib/roslib.dart';
-import 'package:pilsbot/screens/Control.dart';
-import 'package:pilsbot/model/Communication.dart';
-import 'package:global_configuration/global_configuration.dart';
+import 'package:pilsbot/screens/Connecting.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-class ButtonConnect extends StatefulWidget {
-  ButtonConnect();
+class ButtonConnect extends StatelessWidget {
 
-  @override
-  _ButtonConnectState createState() => _ButtonConnectState();
-}
-
-class _ButtonConnectState extends State<ButtonConnect> {
-  var com;
-  Timer timer;
-  int period = 200;
-
-  @override
-  void initState(){
-    com = RosCom();
-    super.initState();
-
-    timer = Timer.periodic(Duration(milliseconds: period), (tim) async{
-      if(com.ros.status == Status.CONNECTED){
-          print('connected');
-          timer.cancel();
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ControlScreen()),
-          );
-      }
-    });
-  }
-
-  void destroyConnection() async {
-    await com.ros.close();
-    setState(() {});
-  }
-
-  @override
-  void dispose() {
-    timer.cancel();
-    destroyConnection();
-    super.dispose();
+  Route _createRoute() {
+    return PageRouteBuilder(
+      transitionDuration: Duration(milliseconds: 1300),
+      pageBuilder: (context, animation, secondaryAnimation) => ConnectingScreen(),
+      transitionsBuilder: (context, animation, secondaryAnimation, child) {
+        var offsetAnimation = animation.drive(Tween(begin: Offset(3.0, 0.0), end: Offset.zero).chain(CurveTween(curve: Curves.ease)));
+        return SlideTransition(
+          position: offsetAnimation,
+          child: child,
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width*0.4,
-      height: 45,
-      child: RawMaterialButton(
-        fillColor: Colors.blue,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width*0.4),
+    return GestureDetector(
+      onTap: (){
+        Navigator.of(context).push(_createRoute());
+      },
+      child: Container(
+        width: MediaQuery.of(context).size.width*0.4,
+        height: 45,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Colors.blue,
+          shape: BoxShape.rectangle,
+          borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width*0.4),
         ),
-        onPressed: () async {
-          var url = "ws://"+GlobalConfiguration().getValue("server_ip")+":"+GlobalConfiguration().getValue("server_port_websocket");
-          print(url);
-          com.ros.url = url;
-          com.ros.connect();
-          setState(() {});
-        },
-        child: Text(AppLocalizations.of(context).login, style:
-          TextStyle(fontSize: 24, color: Colors.black54),
+        child: Text(AppLocalizations.of(context).login,
+          style: TextStyle(
+            fontSize: 24,
+            color: Colors.black54
+          ),
         ),
       )
     );
