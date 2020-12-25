@@ -52,37 +52,52 @@ class _TextFieldOptionState extends State<TextFieldOption> {
             width: MediaQuery.of(context).size.width*0.35,
             height: 45,
             child: Scaffold(
-              backgroundColor: Colors.black54,
+              backgroundColor: Colors.black.withOpacity(0),
               body: TextField(
-                  onChanged: (text){
-                    GlobalConfiguration().updateValue(widget.value, controller.text);
-                    print(GlobalConfiguration().getValue(widget.value));
-                  },
-                  controller: this.controller,
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: MediaQuery.of(context).size.width*0.032
+                cursorColor: Colors.blue,
+                cursorWidth: 4,
+                onChanged: (text){
+                  GlobalConfiguration().updateValue(widget.value, controller.text);
+                  print(GlobalConfiguration().getValue(widget.value));
+                },
+                controller: this.controller,
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: MediaQuery.of(context).size.width*0.032
+                ),
+                decoration: InputDecoration(
+                  contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                  fillColor: Colors.white70.withOpacity(0.7),
+                  focusColor: Colors.white70.withOpacity(0.7),
+                  filled: true,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 0,
+                      style: BorderStyle.none,
+                    ),
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(23.0),
+                      topLeft: Radius.zero,
+                      bottomRight: Radius.circular(23.0),
+                      bottomLeft: Radius.zero,
+                    ),
                   ),
-                  decoration: InputDecoration(
-                    contentPadding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                    fillColor: Colors.white70,
-                    filled: true,
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        width: 0,
-                        style: BorderStyle.none,
-                      ),
-                      borderRadius: BorderRadius.only(
-                        topRight: Radius.circular(23.0),
-                        topLeft: Radius.zero,
-                        bottomRight: Radius.circular(23.0),
-                        bottomLeft: Radius.zero,
-                      ),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      width: 0,
+                      style: BorderStyle.none,
+                    ),
+                    borderRadius: BorderRadius.only(
+                      topRight: Radius.circular(23.0),
+                      topLeft: Radius.zero,
+                      bottomRight: Radius.circular(23.0),
+                      bottomLeft: Radius.zero,
                     ),
                   ),
                 ),
-              )
-            ),
+              ),
+            )
+          ),
         ],
       ),
     );

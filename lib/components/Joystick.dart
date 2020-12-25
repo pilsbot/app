@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:control_pad/views/joystick_view.dart';
 import 'package:pilsbot/model/Communication.dart';
 import 'package:roslib/roslib.dart';
+import 'package:global_configuration/global_configuration.dart';
 
 class Joystick extends StatefulWidget {
   Joystick();
@@ -33,6 +34,8 @@ class _JoystickState extends State<Joystick> {
   /// Steering mode:
   /// mode == {unknown, automatic, one_joystick, two_joysticks}
   String mode='two_joysticks';
+  /// Sensitivity of the joystick. Can be changed in the OptionScreen
+  double sensitivity;
 
   @override
   void initState(){
@@ -40,6 +43,7 @@ class _JoystickState extends State<Joystick> {
     pub = Topic(ros: com.ros, name: '/app/cmd/joystick', type: "sensors_msgs/Joy", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     sub = Topic(ros: com.ros, name: '/control/mode', type: "std_msgs/String", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     super.initState();
+    sensitivity = double.parse(GlobalConfiguration().getValue('joystick_sensitivity'));
     initConnection();
     timer = Timer.periodic(Duration(milliseconds: period), (tim) async{
       if(com.ros.status != Status.CONNECTED) {
@@ -87,8 +91,8 @@ class _JoystickState extends State<Joystick> {
               showArrows: false,
               onDirectionChanged: (degree, distance) {
                 double v = degree * 0.01745329252; // ( * pi / 180 )
-                xl = distance * sin(v);
-                yl = distance * cos(v);
+                xl = distance * sin(v) * sensitivity;
+                yl = distance * cos(v) * sensitivity;
               },
             )
           );
@@ -103,8 +107,8 @@ class _JoystickState extends State<Joystick> {
                 showArrows: false,
                 onDirectionChanged: (degree, distance) {
                   double v = degree * 0.01745329252; // ( * pi / 180 )
-                  xr = distance * sin(v);
-                  yr = distance * cos(v);
+                  xr = distance * sin(v) * sensitivity;
+                  yr = distance * cos(v) * sensitivity;
                 },
               )
           );

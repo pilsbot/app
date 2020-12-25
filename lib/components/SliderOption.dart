@@ -27,6 +27,8 @@ class _SliderOptionState extends State<SliderOption> {
           Container(
             width: MediaQuery.of(context).size.width*0.5,
             height: 45,
+            alignment: Alignment.centerRight,
+            padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
             decoration: BoxDecoration(
               shape: BoxShape.rectangle,
               color: Colors.blue,
@@ -37,8 +39,6 @@ class _SliderOptionState extends State<SliderOption> {
                 bottomRight: Radius.zero,
               ),
             ),
-            alignment: Alignment.centerRight,
-            padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
             child: Text(widget.label,
               style: TextStyle(
                   fontWeight: FontWeight.normal,
@@ -49,31 +49,32 @@ class _SliderOptionState extends State<SliderOption> {
             ),
           ),
           Container(
-              width: MediaQuery.of(context).size.width*0.35,
-              height: 45,
-              decoration: BoxDecoration(
-                shape: BoxShape.rectangle,
-                color: Colors.white70,
-                borderRadius: BorderRadius.only(
-                  topRight: Radius.circular(23.0),
-                  topLeft: Radius.zero,
-                  bottomRight: Radius.circular(23.0),
-                  bottomLeft: Radius.zero,
-                ),
+            width: MediaQuery.of(context).size.width*0.35,
+            height: 45,
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+            decoration: BoxDecoration(
+              shape: BoxShape.rectangle,
+              color: Colors.white70,
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(23.0),
+                topLeft: Radius.zero,
+                bottomRight: Radius.circular(23.0),
+                bottomLeft: Radius.zero,
               ),
-              child: Scaffold(
-                backgroundColor: Colors.black54.withOpacity(0),
-                body:Slider(
-                  value: value,
-                  activeColor: Colors.black54,
-                  onChanged: (v){
-                    print(value);
-                    GlobalConfiguration().updateValue(widget.value, v.toString());
-                    print(GlobalConfiguration().toString());
-                    setState(() { value = v; });
-                  },
-                ),
+            ),
+            child: Scaffold(
+              backgroundColor: Colors.black54.withOpacity(0),
+              body:Slider(
+                value: value,
+                activeColor: Colors.blue,
+                onChanged: (double v){
+                  //print(v);
+                  GlobalConfiguration().updateValue(widget.value, v.toString());
+                  setState(() { value = v; });
+                },
               ),
+            ),
           ),
         ],
       ),
