@@ -25,7 +25,11 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: "stable"
+      - run: pwd
+      - run: ls
       - run: cd pilsbot
+      - run: pwd
+      - run: ls
       - run: flutter pub get
       - run: flutter analyze
       - run: flutter test
