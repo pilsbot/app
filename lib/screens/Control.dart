@@ -131,7 +131,6 @@ class _ControlScreenState extends State<ControlScreen> {
                           ],
                         ),
                         Row(
-<<<<<<< HEAD
                           mainAxisAlignment: MainAxisAlignment.end,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
@@ -143,19 +142,6 @@ class _ControlScreenState extends State<ControlScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           crossAxisAlignment: CrossAxisAlignment.start,
-=======
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            ButtonHeadlight(),
-                            ButtonParty(),
-                          ],
-                        ),
-                        Container(height: MediaQuery.of(context).size.width*0.1),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.start,
->>>>>>> a27b5c8fb04e50e32acda5fb05e31597b56dcf83
                           children: <Widget>[
                             ButtonBlinker(orientation: 'left'),
                             ButtonBlinker(orientation: 'right'),
