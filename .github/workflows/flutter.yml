@@ -25,13 +25,9 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: "stable"
-      - run: pwd
-      - run: ls
-      - run: cd pilsbot && pwd
-      - run: ls
-      - run: flutter pub get
-      - run: flutter analyze
-      - run: flutter test
+      - run: cd pilsbot && pwd && flutter pub get
+      - run: cd pilsbot && pwd && flutter analyze
+      - run: cd pilsbot && pwd && flutter test
   #build_ios:
   #  name: Build Flutter (iOS)
   #  needs: [flutter_test]
