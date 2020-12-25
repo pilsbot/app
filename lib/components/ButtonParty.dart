@@ -1,27 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:roslib/roslib.dart';
+import 'package:pilsbot/model/Communication.dart';
+import 'package:roslib/roslib.dart';
 
-
-class PartyLight extends StatefulWidget {
-  Ros ros;
-  PartyLight({@required  this.ros});
+class ButtonParty extends StatefulWidget {
+  ButtonParty();
 
   @override
-  _PartyLightState createState() => _PartyLightState();
+  _ButtonPartyState createState() => _ButtonPartyState();
 }
 
-class _PartyLightState extends State<PartyLight> {
+class _ButtonPartyState extends State<ButtonParty> {
   /// Are the lights on?
   /// 1=yes, 0=no, -1=no info
   int isLightOn;
   /// ROS topic to subscribe to
   Topic sub;
   Topic pub;
+  var com;
 
   @override
   void initState(){
-    sub = Topic(ros: widget.ros, name: '/lighting/party', type: "std_msgs/Bool", reconnectOnClose: true, queueLength: 10, queueSize: 10);
-    pub = Topic(ros: widget.ros, name: '/app/cmd/lighting/party', type: "std_msgs/Bool", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    com = RosCom();
+    sub = Topic(ros: com.ros, name: '/lighting/party', type: "std_msgs/Bool", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    pub = Topic(ros: com.ros, name: '/app/cmd/lighting/party', type: "std_msgs/Bool", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     super.initState();
     isLightOn = -1;
     initConnection();

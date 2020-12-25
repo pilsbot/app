@@ -27,4 +27,4 @@ jobs:
     - name: build apk
       uses: steebchen/flutter@v1.1.0
       with:
-        args: build apk --release
+        args: build apk --release --target-platform android-arm,android-arm64,android-x64 --split-per-abi

@@ -1,0 +1,8 @@
+{
+  "login": "Verbinden",
+  "options": "Options",
+  "server_ip": "Server IP",
+  "websocket_port": "WebSocket-Server Port",
+  "rest_api_port": "REST-Server Port",
+  "joystick_sensitivity": "Joystickempfindlichkeit"
+}

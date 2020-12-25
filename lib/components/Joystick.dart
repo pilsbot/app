@@ -2,12 +2,12 @@ import 'dart:math';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:control_pad/views/joystick_view.dart';
+import 'package:pilsbot/model/Communication.dart';
 import 'package:roslib/roslib.dart';
+import 'package:global_configuration/global_configuration.dart';
 
 class Joystick extends StatefulWidget {
-  Ros ros;
-
-  Joystick({@required this.ros});
+  Joystick();
 
   @override
   _JoystickState createState() => _JoystickState();
@@ -29,17 +29,26 @@ class _JoystickState extends State<Joystick> {
   /// ROS topics to use
   Topic pub;
   Topic sub;
+  /// Communication with ROS
+  var com;
   /// Steering mode:
   /// mode == {unknown, automatic, one_joystick, two_joysticks}
   String mode='two_joysticks';
+  /// Sensitivity of the joystick. Can be changed in the OptionScreen
+  double sensitivity;
 
   @override
   void initState(){
-    pub = Topic(ros: widget.ros, name: '/app/cmd/joystick', type: "sensors_msgs/Joy", reconnectOnClose: true, queueLength: 10, queueSize: 10);
-    sub = Topic(ros: widget.ros, name: '/control/mode', type: "std_msgs/String", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    com = RosCom();
+    pub = Topic(ros: com.ros, name: '/app/cmd/joystick', type: "sensors_msgs/Joy", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    sub = Topic(ros: com.ros, name: '/control/mode', type: "std_msgs/String", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     super.initState();
+    sensitivity = double.parse(GlobalConfiguration().getValue('joystick_sensitivity'));
     initConnection();
     timer = Timer.periodic(Duration(milliseconds: period), (tim) async{
+      if(com.ros.status != Status.CONNECTED) {
+        timer.cancel();
+      }
       var msg = {'header': {'frame_id': 'app_joystick'}, 'axes': [xl, yl, xr, yr, 0, 0], 'buttons': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]};
       pub.publish(msg);
     });
@@ -57,7 +66,8 @@ class _JoystickState extends State<Joystick> {
 
   @override
   void dispose(){
-    timer.cancel(); // TODO: not always working
+    timer.cancel();
+    destroyConnection();
     super.dispose();
   }
 
@@ -81,8 +91,8 @@ class _JoystickState extends State<Joystick> {
               showArrows: false,
               onDirectionChanged: (degree, distance) {
                 double v = degree * 0.01745329252; // ( * pi / 180 )
-                xl = distance * sin(v);
-                yl = distance * cos(v);
+                xl = distance * sin(v) * sensitivity;
+                yl = distance * cos(v) * sensitivity;
               },
             )
           );
@@ -97,8 +107,8 @@ class _JoystickState extends State<Joystick> {
                 showArrows: false,
                 onDirectionChanged: (degree, distance) {
                   double v = degree * 0.01745329252; // ( * pi / 180 )
-                  xr = distance * sin(v);
-                  yr = distance * cos(v);
+                  xr = distance * sin(v) * sensitivity;
+                  yr = distance * cos(v) * sensitivity;
                 },
               )
           );

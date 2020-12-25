@@ -1,1 +1,3 @@
-# Smartphone App (IOS, Android) for communication with the [Pilsbot](http://pilsbot.de/)
+# Pilsbot App
+
+Control the [Pilsbot](http://pilsbot.de/) with your Smartphone.

@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:pilsbot/model/Communication.dart';
 import 'package:roslib/roslib.dart';
 
-class EmergencySwitch extends StatefulWidget {
-  Ros ros;
-  EmergencySwitch({@required  this.ros});
+class ButtonOnOff extends StatefulWidget {
+  ButtonOnOff();
 
   @override
-  _EmergencySwitchState createState() => _EmergencySwitchState();
+  _ButtonOnOffState createState() => _ButtonOnOffState();
 }
 
-class _EmergencySwitchState extends State<EmergencySwitch> {
+class _ButtonOnOffState extends State<ButtonOnOff> {
   /// Is the system on? -1=don't know, 0=no, 1=yes
   int isOn=-1;
   /// ROS topic to use
   Topic sub;
   Topic pub;
+  /// Communication with ROS
+  var com;
 
   @override
   void initState(){
-    sub = Topic(ros: widget.ros, name: '/system/on', type: "std_msgs/Bool", reconnectOnClose: true, queueLength: 10, queueSize: 10);
-    pub = Topic(ros: widget.ros, name: '/app/cmd/emergency/stop', type: "std_msgs/Bool", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    com = RosCom();
+    sub = Topic(ros: com.ros, name: '/system/on', type: "std_msgs/Bool", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    pub = Topic(ros: com.ros, name: '/app/cmd/emergency/stop', type: "std_msgs/Bool", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     super.initState();
     initConnection();
   }

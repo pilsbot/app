@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pilsbot/model/Communication.dart';
 import 'package:roslib/roslib.dart';
 
 class SoundBar extends StatefulWidget {
-  Ros ros;
-  SoundBar({@required this.ros});
+  SoundBar();
 
   @override
   _SoundBarState createState() => _SoundBarState();
@@ -21,11 +21,14 @@ class _SoundBarState extends State<SoundBar> {
   /// ROS topics to use
   Topic sub;
   Topic pub;
+  /// Communication with ROS
+  var com;
 
   @override
   void initState(){
-    sub = Topic(ros: widget.ros, name: '/system/sound/', type: "std_msgs/Float32", reconnectOnClose: true, queueLength: 10, queueSize: 10);
-    pub = Topic(ros: widget.ros, name: '/app/cmd/sound/value/', type: "std_msgs/Float32", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    com = RosCom();
+    sub = Topic(ros: com.ros, name: '/system/sound', type: "std_msgs/Float32", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    pub = Topic(ros: com.ros, name: '/app/cmd/sound/value', type: "std_msgs/Float32", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     super.initState();
     initConnection();
   }

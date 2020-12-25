@@ -1,17 +1,16 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:pilsbot/model/Communication.dart';
 import 'package:roslib/roslib.dart';
 
-class VelocityState extends StatefulWidget {
-  Ros ros;
-  VelocityState({@required this.ros});
+class StateSpeed extends StatefulWidget {
+  StateSpeed();
 
   @override
-  _VelocityStateState createState() => _VelocityStateState();
+  _StateSpeedState createState() => _StateSpeedState();
 }
 
-class _VelocityStateState extends State<VelocityState> {
+class _StateSpeedState extends State<StateSpeed> {
   /// Actual velocity
   double value = 69420.0;
   /// Maximum velocity value accepted.
@@ -25,10 +24,13 @@ class _VelocityStateState extends State<VelocityState> {
   /// How often do we want to check the velocity?
   int period = 1000; // milliseconds
   Topic topic;
+  /// Communication with ROS
+  var com;
 
   @override
   void initState(){
-    topic = Topic(ros: widget.ros, name: '/control/speed', type: "std_msgs/Float32", reconnectOnClose: true, queueLength: 10, queueSize: 10);
+    com = RosCom();
+    topic = Topic(ros: com.ros, name: '/control/speed', type: "std_msgs/Float32", reconnectOnClose: true, queueLength: 10, queueSize: 10);
     super.initState();
     initConnection();
   }
