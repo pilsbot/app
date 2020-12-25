@@ -27,8 +27,7 @@ jobs:
           channel: "stable"
       - run: pwd
       - run: ls
-      - run: cd pilsbot
-      - run: pwd
+      - run: cd pilsbot && pwd
       - run: ls
       - run: flutter pub get
       - run: flutter analyze
