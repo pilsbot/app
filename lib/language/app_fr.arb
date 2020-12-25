@@ -4,5 +4,10 @@
   "server_ip": "IP du serveur",
   "websocket_port": "Port WebSocket",
   "rest_api_port": "Port de l'API REST",
-  "joystick_sensitivity": "Sensibilité du joystick"
+  "connecting": "Connection...",
+  "joystick_sensitivity": "Sensibilité du joystick",
+  "username": "Utilisateur",
+  "password": "Mot de passe",
+  "connection_failed": "Impossible de se connecter au PilsBot.",
+  "lost_connection": "La connexion a été perdue."
 }

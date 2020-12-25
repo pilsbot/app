@@ -3,5 +3,8 @@
   "server_port_websocket": "9090",
   "server_port_rest": "5001",
   "joystick_sensitivity": "1.0",
-  "language": "en"
+  "username": "Chris",
+  "password": "password",
+  "language": "en",
+  "error_msg": ""
 }

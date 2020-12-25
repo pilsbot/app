@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
 
 class TextFieldOption extends StatefulWidget {
-  TextFieldOption(this.label, this.value);
-
+  TextFieldOption(this.label, this.value, [ this.isPassword = false ]);
+  final bool isPassword;
   final String label;
   final String value;
 
@@ -57,6 +57,7 @@ class _TextFieldOptionState extends State<TextFieldOption> {
                 autofocus: false,
                 controller: this.controller,
                 cursorColor: Colors.blue,
+                obscureText: widget.isPassword,
                 cursorWidth: 4,
                 textAlignVertical: TextAlignVertical.center,
                 textAlign: TextAlign.left,
