@@ -20,7 +20,7 @@ class _SliderOptionState extends State<SliderOption> {
   Widget build(BuildContext context) {
     value = double.parse(GlobalConfiguration().getValue(widget.value));
     return Container(
-      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+      padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

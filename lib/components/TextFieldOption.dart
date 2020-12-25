@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
 
 class TextFieldOption extends StatefulWidget {
-  TextFieldOption(this.hint, this.value);
+  TextFieldOption(this.label, this.value);
 
-  final String hint;
+  final String label;
   final String value;
 
   @override
@@ -20,7 +20,7 @@ class _TextFieldOptionState extends State<TextFieldOption> {
     controller.text = GlobalConfiguration().getValue(widget.value);
     controller.selection = TextSelection.fromPosition(TextPosition(offset: controller.text.length));
     return Container(
-      padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+      padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -39,7 +39,7 @@ class _TextFieldOptionState extends State<TextFieldOption> {
             ),
             alignment: Alignment.centerRight,
             padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-            child: Text(widget.hint,
+            child: Text(widget.label,
               style: TextStyle(
                 fontWeight: FontWeight.normal,
                 color: Colors.black54,
@@ -54,13 +54,16 @@ class _TextFieldOptionState extends State<TextFieldOption> {
             child: Scaffold(
               backgroundColor: Colors.black.withOpacity(0),
               body: TextField(
+                autofocus: false,
+                controller: this.controller,
                 cursorColor: Colors.blue,
                 cursorWidth: 4,
+                textAlignVertical: TextAlignVertical.center,
+                textAlign: TextAlign.left,
                 onChanged: (text){
                   GlobalConfiguration().updateValue(widget.value, controller.text);
                   print(GlobalConfiguration().getValue(widget.value));
                 },
-                controller: this.controller,
                 style: TextStyle(
                   color: Colors.blue,
                   fontSize: MediaQuery.of(context).size.width*0.032
@@ -70,18 +73,6 @@ class _TextFieldOptionState extends State<TextFieldOption> {
                   fillColor: Colors.white70.withOpacity(0.7),
                   focusColor: Colors.white70.withOpacity(0.7),
                   filled: true,
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                      width: 0,
-                      style: BorderStyle.none,
-                    ),
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(23.0),
-                      topLeft: Radius.zero,
-                      bottomRight: Radius.circular(23.0),
-                      bottomLeft: Radius.zero,
-                    ),
-                  ),
                   border: OutlineInputBorder(
                     borderSide: BorderSide(
                       width: 0,
